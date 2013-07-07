@@ -30,10 +30,10 @@ SSMS is a small music server written in Python. It lets you listen to music righ
 ##*why!?*
 
 I wanted: 
-1. Browser playback of my media files from anywhere. 
-2. Good support for mobile devices. 
-3. On the fly file conversion (e.g. .mp3 to .ogg for firefox!)
-4. The files to appear like a NAS on the network (optional).
-5. An easy way to organize the files you upload. 
-6. Password protection on the server. 
++ 1. Browser playback of my media files from anywhere. 
++ 2. Good support for mobile devices. 
++ 3. On the fly file conversion (e.g. .mp3 to .ogg for firefox!)
++ 4. The files to appear like a NAS on the network (optional).
++ 5. An easy way to organize the files you upload. 
++ 6. Password protection on the server. 
 
