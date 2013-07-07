@@ -20,19 +20,19 @@
     </div>
     
     {% if message != None and message != '' %}
-    <div class="row">
-        <div class="span12">
-            {% if message == 'ok' %}
-                <h4 class="alert alert-success">
-                    Success!
-                </h4>
-            {% else %}
-                <h4 class="alert alert-error">
-                    {{ message }}
-                </h4>
-            {% endif %}
+        <div class="row">
+            <div class="span12">
+                {% if message == 'ok' %}
+                    <h4 class="alert alert-success">
+                        Success!
+                    </h4>
+                {% else %}
+                    <h4 class="alert alert-error">
+                        {{ message }}
+                    </h4>
+                {% endif %}
+            </div>
         </div>
-    </div>
     {% endif %}
     
     <div class="row">
@@ -49,9 +49,9 @@
         <div class="span12">
             <!--[if lte IE 8]><span style="filter: FlipH; -ms-filter: "FlipH"; display: inline-block;"><![endif]-->
         <span style="-moz-transform: scaleX(-1); -o-transform: scaleX(-1); -webkit-transform: scaleX(-1); transform: scaleX(-1); display: inline-block;">
-            ©
+            &copy;
         </span>
-<!--[if lte IE 8]></span><![endif]--> Aaron Decker 2013. Free to use, free to modify.
+            <!--[if lte IE 8]></span><![endif]--> Aaron Decker 2013. Free to use, free to modify.
         </div>
     </div>
 </div>

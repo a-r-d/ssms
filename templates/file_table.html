@@ -1,0 +1,37 @@
+<table class="table table-striped">
+    <tr>
+        <th>
+            File
+        </th>
+        <th>
+            size
+        </th>
+        <th>
+            Add
+        </th>
+    </tr>
+    {% for file in listing %}
+        <tr>
+            <td>
+                {% if file.isDir %}
+                    <a href='javascript:void(0);' class='dir' onClick='loadDir("{{file.safePath}}")'>{{ file.name }}</a>
+                {% else %}
+                    <a href='javascript:void(0);' class='file' onClick='playFile("{{file.safePath}}")'>{{ file.name }}</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if file.isDir == False %}
+                    {{ file.sizeStr }}
+                {% else %}
+                    directory
+                {% endif %}
+                
+            </td>
+            <td>
+                {% if file.isDir == False %}
+                    <button>Add</button>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>

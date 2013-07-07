@@ -4,10 +4,11 @@
  *
  *  
  */
- 
 var playing_song_name = "";
 var playing_song_path = "";
 var playing_song_dir = "";
+var current_browsed_dir = "";
+var dir_file_listing = [];
 var player_context = ""; // ['browser', 'search', 'custom']
  
 $(document).ready( function(){
@@ -20,8 +21,7 @@ $(document).ready( function(){
 ///////////////////////////////////////////////////////
 
 function updatePlayer(){
-    $("#nowplaying").empty().append(player_context + ": " + name ); 
-    //$("#current_song").empty().append(player_context + ": " + name);
+    $("#nowplaying").empty().append( playing_song_name ); 
 }
 
 function playSong() {
@@ -38,7 +38,7 @@ function playFile( play_file ) {
     // a hack:
     //play_file = play_file.replace("*", "'");
     console.log("Playing file: " + play_file);
-    $("#song_src").attr("src", "/file" + play_file); //play_file has a prefixed slash
+    $("#song_src").attr("src", "/file?q=" + play_file); //play_file has a prefixed slash
     try {
         document.getElementById("audio_control").load();
         document.getElementById("audio_control").play();
@@ -67,52 +67,54 @@ function playFileClick(play_file, context) {
 }
 
 function nextSong() {
-    var arr_to_iter = file_array;
+    var arr_to_iter = dir_file_listing;
+    /*
     if( player_context == 'search' ) {
         arr_to_iter = search_file_array;
     } else if( player_context == 'playlist') {
         arr_to_iter = playlist_file_array;
     }
-    
+    */
     console.log("Playing next song");
     if( arr_to_iter.length < 2 ) {
         return;
     }
     var currFile = $("#song_src").attr("src");
     for( var i = 0; i < arr_to_iter.length; i++) {
-        if( currFile == arr_to_iter[i]) {
+        if( currFile.indexOf( arr_to_iter[i].safePath ) != -1 ) {
             if(arr_to_iter.length - 1 > i ) {
                 // play next
-                 playFile( arr_to_iter[i + 1] )
+                 playFile( arr_to_iter[i + 1].safePath )
             } else {
                 // play first
-                playFile( arr_to_iter[0] )
+                playFile( arr_to_iter[0].safePath )
             }
         }
     }
 }
 
 function prevSong() {
-    var arr_to_iter = file_array;
+    var arr_to_iter = dir_file_listing;
+    /*
     if( player_context == 'search' ) {
         arr_to_iter = search_file_array;
     } else if( player_context == 'playlist') {
         arr_to_iter = playlist_file_array;
     }
-    
+    */
     console.log("Playing previous song");
     if( arr_to_iter.length < 2 ) {
         return;
     }
     var currFile = $("#song_src").attr("src");
     for( var i = 0; i < arr_to_iter.length; i++) {
-        if( currFile == arr_to_iter[i]) {
+        if( currFile.indexOf( arr_to_iter[i].safePath ) != -1 ) {
             if(i != 0) {
                 // play next
-                 playFile( arr_to_iter[i - 1] )
+                 playFile( arr_to_iter[i - 1].safePath )
             } else {
                 // play first
-                 playFile( arr_to_iter[0] )
+                 playFile( arr_to_iter[0].safePath )
             }
         }
     }
@@ -126,28 +128,48 @@ function songEnded() {
 function loadDir( directory_name ) {    
     console.log("loading: " + directory_name );
     
-    // a hack:
-    //directory_name = directory_name.replace("*", "'");
-    
-    var dat = {
-        dir: directory_name
-    }
+    // Get the HTML from the template
     $.ajax({
-        url: "dir_list.php",
-        data: dat,
-        dataType:"json",
+        url: "/dir?q=" + directory_name,
+        dataType:"html",
         success: function(result) {
-           var table = result.table;
-           var files = result.files;
-           $("#dir_listing_table").empty().append(table);
-           
-           file_array = files;
-           
-           one_dir_up = getOneUp( directory_name )
+           $("#file_browser_table").empty().append(result);
+           current_browsed_dir = directory_name;
+           updateBreadcrumbs();
         },
         error: function(result) {
-            console.log("There was some error: " + result);
+            console.log("/dir There was some error: " + result);
             alert("error getting files");
         }
     });
+    
+    // get the JSON 
+    $.ajax({
+        url: "/dir/json?q=" + directory_name,
+        dataType:"json",
+        success: function(result) {
+           console.log( result );
+           dir_file_listing = result;
+        },
+        error: function(result) {
+            console.log("/dir/json There was some error: " + result);
+        }
+    });
+}
+
+function updateBreadcrumbs(){
+    var cleaned = current_browsed_dir.replace("\\", "/").replace("//", "/"); // i want single forward slashes
+    if( cleaned.substring(0,1) == "/" ) {
+        cleaned = cleaned.substring(1); // break off the first piece.
+    }
+    var splits = cleaned.split("/");
+    $("#dir_breadcrumb").empty();
+    $("#dir_breadcrumb").append("/ <a href='javascript:void(0);' onClick='loadDir(\"/\")'>home</a> /");
+    for( var i = 0; i < splits.length; i++) {
+        $("#dir_breadcrumb").append(""
+    }
+}
+
+function addUp(){
+    
 }

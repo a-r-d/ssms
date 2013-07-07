@@ -40,9 +40,14 @@ Get library listing:
 def list_library(lib_dir, db_dir, some_path=None):
     listing = []
     skip_list = ["..","."]
+    target_dir = lib_dir
+    if some_path != None:
+        # lib dir has no trailing slash, some_path has a trailing slash.
+        target_dir = lib_dir + "/" + some_path
+    
     try:
-        for a_file in os.listdir( lib_dir ):
-            file_path = os.path.join( lib_dir + "/" , a_file )
+        for a_file in os.listdir( target_dir ):
+            file_path = os.path.join( target_dir + "/" , a_file )
             if os.path.basename(file_path) not in skip_list:
                 if os.path.isdir( file_path ):
                     listing.append({

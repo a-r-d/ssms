@@ -17,6 +17,7 @@ import shutil # to copy/del folders.
 import distutils.core #to copy tree silently
 import subprocess # to restart server.
 import time # to wait for server.
+import json
 
 #external libs:
 import sqlite3
@@ -72,13 +73,34 @@ def home( message=None ):
         listing=listing,
         message=message
         )
-@app.route('/file/<filename>')
-def getFile( filename, message=None ):
+        
+@app.route('/file')
+def getFile(message=None ):
     # filename is the absolute path: 
+    if request.method=='GET' and request.args.get("q") != None:  
+        file = os.path.normpath( LIB_DIR + request.args.get("q") )
+        return send_file(file, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
+    else:
+        return "Error"
     
-    file = os.path.join( LIB_DIR, filename )
-    
-    return send_file(file, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
+@app.route('/dir')
+def getDirHTML( message=None ):
+    listing = []
+    if request.method=='GET' and request.args.get("q") != None: 
+        listing = list_library(LIB_DIR, DB_DIR, request.args.get("q"))
+    return render_template(
+        'file_table.html', 
+        listing=listing,
+        message=message
+        )
+ 
+@app.route('/dir/json')
+def getDirJSON( message=None ):
+    listing = []
+    if request.method=='GET' and request.args.get("q") != None: 
+        listing = list_library(LIB_DIR, DB_DIR, request.args.get("q"))
+    return json.dumps( listing )
+
 
 ############################################################################
 # end routes
