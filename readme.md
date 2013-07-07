@@ -1,28 +1,33 @@
 Super Simple Music Server
 ==========================
 
-*SSMS*
-
-SSMS is a small music server written in Python. It lets you listen to music right from your browser using HTML5. Google chrome even has support for .mp3 and .mp4 playback so it is almost to point of being drag-and-drop. 
 
 
-*Requirements*
+##*SSMS*
 
-a) Python 2.6+
+SSMS is a small music server written in Python. It lets you listen to music right from your browser using HTML5. Google chrome even has support for .mp3 and .mp4 playback so it is almost to point of being drag-and-drop as far as installation goes. You will however have to upload your library to you webserver/ media server/ open ports on your firewall. So its not as simple as using pandora. I have my own music collection I have been working on for years though, and would like to keep hold of it!
 
-b) Non-Standard Python Modules:
+
+
+
+##*Requirements*
+
++ Python 2.6+
+
++ Non-Standard Python Modules:
     1. Flask +(dependencies for templates, ect- just use pip)
     2. Tornado
 
-c) Cron- install a cron job to restart the server in case of crashing. 
++ Cron- install a cron job to restart the server in case of crashing. 
+    do something like: "20 * * * * /path/to/run.sh"
 
-d) A bunch of music files! Put them wherever you point LIB_DIR to, by default it is
++ A bunch of music files! Put them wherever you point LIB_DIR to, by default it is
     [project_path]/library
 
 
 
 
-*why!?*
+##*why!?*
 
 I wanted: 
 1. Browser playback of my media files from anywhere. 
