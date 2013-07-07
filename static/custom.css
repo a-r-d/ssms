@@ -1,0 +1,64 @@
+/***
+
+This stylesheet is modified by the control panel. It will provide highlight colors, ect.
+
+***/
+
+a {
+    color: #259124;
+}
+a:hover {
+    color: #47cd1b;
+}
+
+.c {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.clean-nav {
+    display: inline-block;
+}
+.clean-nav li {
+    display: inline-block;
+}
+
+.paper {
+    background-color: white;
+    text-align: center;
+    font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+}
+
+.light-header {
+    font-weight: 400;
+}
+
+.full-shadow-light {
+    -webkit-box-shadow: 0px 1px 24px rgba(50, 50, 50, 0.79);
+    -moz-box-shadow:    0px 1px 24px rgba(50, 50, 50, 0.79);
+    box-shadow:         0px 1px 24px rgba(50, 50, 50, 0.79);
+}
+
+.bottom-shadow-light {
+    box-shadow:         0px 6px 18px rgba(50, 50, 50, 0.62);
+    z-index: 10;
+}
+
+.dark-grey-bg {
+    background-image:url('/images/otis_redding.png');
+    background-color: #888;
+}
+
+.form-input-sizing {
+   min-width: 230px;
+}
+
+/**** CURL EFFECT *************************************************************/
+.page-corner {
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 60px 0 0 60px;
+    border-color: transparent transparent transparent #ffffff;
+}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block body %}
+<style>
+
+    .dir {
+        color: #3D3D3D;
+    }
+    
+    .file {
+        color: #008DC9;
+    }
+
+</style>
+<div id="player">
+    <!-- 
+    https://developer.mozilla.org/en-US/docs/DOM/HTMLMediaElement
+    -->
+    <audio controls id="audio_control" onended="songEnded()">
+        <source id="song_src" src="" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <br />
+    Playing:
+    <span id="nowplaying">
+        
+    </span>
+</div>
+<h3>
+    Files:
+</h3>
+<div>
+    <table class="table table-striped">
+        <tr>
+            <th>
+                File
+            </th>
+            <th>
+                size
+            </th>
+            <th>
+                Add
+            </th>
+        </tr>
+        {% for file in listing %}
+            <tr>
+                <td>
+                    {% if file.isDir %}
+                        <a href='javascript:void(0);' class='dir' onClick='browseDir("{{file.safePath}}")'>{{ file.name }}</a>
+                    {% else %}
+                        <a href='javascript:void(0);' class='file' onClick='playFile("{{file.safePath}}")'>{{ file.name }}</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if file.isDir == False %}
+                        {{ file.sizeStr }}
+                    {% else %}
+                        directory
+                    {% endif %}
+                    
+                </td>
+                <td>
+                    {% if file.isDir == False %}
+                        <button>Add</button>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+</div>
+
+
+
+{% endblock %}

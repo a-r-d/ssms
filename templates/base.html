@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<title>SSMS- Personal Cloud Music</title>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap_readable.min.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}" />
+<script src="{{ url_for('static', filename='jquery-1.9.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='custom.js') }}"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <h2>
+                SSMS
+            </h2>
+        </div>
+    </div>
+    
+    {% if message != None and message != '' %}
+    <div class="row">
+        <div class="span12">
+            {% if message == 'ok' %}
+                <h4 class="alert alert-success">
+                    Success!
+                </h4>
+            {% else %}
+                <h4 class="alert alert-error">
+                    {{ message }}
+                </h4>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="span12">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            &copy; Aaron Decker 2013.
+        </div>
+    </div>
+</div>
+</body>
+</html>

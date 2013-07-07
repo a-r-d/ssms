@@ -1,0 +1,10 @@
+*.pyc
+*.txt
+*.db
+*.log
+*.mp3
+*.mp4
+*.m4a
+*.wav
+*.ogg
+*.wma
