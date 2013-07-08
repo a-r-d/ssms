@@ -162,14 +162,38 @@ function updateBreadcrumbs(){
     if( cleaned.substring(0,1) == "/" ) {
         cleaned = cleaned.substring(1); // break off the first piece.
     }
+    
     var splits = cleaned.split("/");
+    var no_empty = [];
+    for( var i = 0; i < splits.length; i++) {
+        if( splits[i] != "" && splits[i] != "." ) {
+            no_empty.push( splits[i] );
+        }
+    }
+    splits = no_empty;
+    
     $("#dir_breadcrumb").empty();
     $("#dir_breadcrumb").append("/ <a href='javascript:void(0);' onClick='loadDir(\"/\")'>home</a> /");
+    if( splits.length == 0 || (splits.length == 1 && splits[0] == "") ) return;
     for( var i = 0; i < splits.length; i++) {
-        $("#dir_breadcrumb").append(""
+        $("#dir_breadcrumb").append('<a href="javascript:void(0);" onClick=\'loadDir("' + addUp( splits, i) + '")\'>' + splits[i] + "</a> /");
     }
 }
 
-function addUp(){
-    
+function addUp(arr, position){
+    var str = "";
+    if( arr.length >= position ) {
+        for( var i=0; i < position + 1; i++) {
+            str += arr[i] + "/";
+        }
+        return str;
+    } else {
+        return arr[0];
+    }
 }
+
+
+
+
+
+
