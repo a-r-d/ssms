@@ -6,6 +6,7 @@ from flask import request
 from flask import url_for, redirect
 from flask import Response
 from flask import send_file
+from flask import g
 
 # built in:
 from datetime import datetime
@@ -35,7 +36,8 @@ LIB_DIR = BASE_DIR + "/library"
 LOG_DIR = BASE_DIR + "/logs"
 LOG_FILE = LOG_DIR + "/out.log"
 DB_DIR = BASE_DIR + "/db"
-DB_FILE = BASE_DIR + "/db/main.db"
+DATABASE = BASE_DIR + "/db/main.db"
+DB_SCHEMA = BASE_DIR + "/db/schema.sql"
 
 LOCAL_DEBUG = False
 
@@ -44,6 +46,9 @@ dirs = [TEMP_DIR, LIB_DIR, LOG_DIR, DB_DIR]
 for d in dirs:
     if not os.path.exists(d):
         os.makedirs(d)
+        
+if not os.path.exists(DATABASE):
+    init_db()
 
 # create app:
 app = Flask(__name__)
@@ -63,7 +68,35 @@ url_for('static', filename='bootstrap_readable.min.css')
 url_for('static', filename='jquery-1.9.1.min.js')
 
 """
+###########################################################
+@app.before_request
+def before_request():
+    g.db = get_db()
+    
+@app.teardown_request
+def teardown_request(exception):
+    db = getattr(g, '_main_db', None)
+    if db is not None:
+        db.close()
+        
+    
+def get_db():
+    db = getattr(g, '_main_db', None)
+    if db is None:
+        db = g._database = connect_to_db()
+    return db
+    
+def connect_to_db():
+    conn = sqlite3.connect(DATABASE)
+    return conn
 
+def init_db():
+    with app.app_context():
+        db = get_db()
+        with app.open_resource(DB_SCHEMA, mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+        
 ###########################################################
 @app.route('/')
 def home( message=None ):
@@ -101,6 +134,13 @@ def getDirJSON( message=None ):
         listing = list_library(LIB_DIR, DB_DIR, request.args.get("q"))
     return json.dumps( listing )
 
+    
+@app.route('/admin')
+def adminPanel():
+    return render_template(
+        'admin.html', 
+        message=message
+        )
 
 ############################################################################
 # end routes

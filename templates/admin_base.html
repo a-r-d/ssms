@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+<title>SSMS- Admin</title>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap_readable.min.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}" />
+<script src="{{ url_for('static', filename='jquery-1.9.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='custom.js') }}"></script>
+
+</head>
+<body>
+<div class="container">
+    {% block "body" %}{% endblock %}
+</div>
+</body>

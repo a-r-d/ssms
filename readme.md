@@ -24,6 +24,27 @@ SSMS is a small music server written in Python. It lets you listen to music righ
 + A bunch of music files! Put them wherever you point LIB_DIR to, by default it is
     [project_path]/library
 
++ pyhton sqlite3 module. 
+
+
+
+
+##*Installation*
+
++ Install dependencies listed above.
+
++ Drop the files in the repo somehere on your server
+
++ do ./run.sh to start the server.
+
++ set a different port if you like in server.py (default is 8888)
+
++ The DB file will be created on first run. Default passwords for user and admin are "password"
+
++ Go into the admin panel and point the library where you want it. Otherwise the app will read the 
+    'library' dir from the base of the app. 
+
++ Save the admin settings and refresh the page. 
 
 
 

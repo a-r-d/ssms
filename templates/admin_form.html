@@ -1,0 +1,35 @@
+{% extends "admin_base.html" %}
+
+{% block "body" %}
+
+
+<div class="row">
+    <div class="span12">
+        <h2>
+            SSMS Admin Panel Login
+        </h2>
+    </div>
+</div>
+<div class="row">
+    <div class="span12">
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="span12">
+        <form method="POST" action='/admin/login'>
+        
+            <input type='password' name='password' id='password' />
+            <input type='submit' name='submit' />
+            
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="span12">
+        <hr />
+    </div>
+</div>
+
+
+{% endblock %}
