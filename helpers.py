@@ -1,5 +1,6 @@
 import os
 import shutil
+import random
 from datetime import datetime
 
 """
@@ -76,9 +77,43 @@ def list_library(lib_dir, db_dir, some_path=None):
         
     return listing
     
+"""
+Walks on the LIB_DIR to get a random file.
+"""
+def find_rand_file(LIB_DIR):
+    the_count = 0
+    for root, dirs, files in os.walk(LIB_DIR):
+        for file in files:
+            the_count += 1
+            
+    the_stopper = int(random.random() * the_count) # conv to int
+    print "Stopped on: ", the_stopper, " out of: ", the_count
+    
+    i = 0
+    the_file = None
+    for root, dirs, files in os.walk(LIB_DIR):
+        found = False
+        for file in files:
+            if i >= the_stopper and os.path.isfile(os.path.join( root, file )) and test_ext(file):
+                the_file = os.path.normpath( os.path.join( root, file))
+                found = True
+                break
+            i += 1
+        if found:
+            break
+    
+    print "Random: ", the_file
+    return the_file
+
+def test_ext( filename ):
+    filter = [".mp3", ".m4a", '.ogg']
+    for ext in filter:
+        if filename.lower().find( ext.lower() ) != -1:
+            return True
+    return False
     
 ########################################################################################
-### Don't expose these outside of file.
+### Don't expose these outside of file,
 ########################################################################################
 def pathMinusLibrary( lib_dir, path_dir):
     ## why do this? we dont want to serve whole to the world!

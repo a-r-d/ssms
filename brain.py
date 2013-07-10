@@ -19,6 +19,7 @@ import distutils.core #to copy tree silently
 import subprocess # to restart server.
 import time # to wait for server.
 import json
+import random
 
 #external libs:
 import sqlite3
@@ -27,6 +28,8 @@ import sqlite3
 from helpers import clean_folder
 from helpers import list_library
 from helpers import log
+from helpers import pathMinusLibrary
+from helpers import find_rand_file
 
 ###########################################################
 # get the dir name to be relative to.
@@ -141,10 +144,24 @@ def adminPanel():
         'admin.html', 
         message=message
         )
+        
+@app.route('/randomfile')
+def getRandomFile(message=None ):
+    # filename is the absolute path: 
+    the_file = find_rand_file(LIB_DIR)
+    return send_file(the_file, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
 
+@app.route('/random')
+def getRandom(message=None ):
+    the_file = find_rand_file(LIB_DIR)
+    file_path = pathMinusLibrary(LIB_DIR, the_file)
+    return file_path
+        
 ############################################################################
 # end routes
 ############################################################################
+
+    
 #############################################################
 if __name__ == '__main__':
     print "starting in: " + BASE_DIR

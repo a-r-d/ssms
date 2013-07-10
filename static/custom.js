@@ -43,14 +43,13 @@ function playFile( play_file ) {
         document.getElementById("audio_control").load();
         document.getElementById("audio_control").play();
         
-        var splits = play_file.split("/");
+        var splits = play_file.replace("\\", "/").split("/");
         var name = splits[ splits.length - 1];
         
         playing_song_name = name;
         playing_song_path = play_file;
         
         updatePlayer();
-        
     } catch ( e ) {
         alert( e );
     }
@@ -118,6 +117,21 @@ function prevSong() {
             }
         }
     }
+}
+
+function getRandom() {
+    $.ajax({
+        url: "/random",
+        dataType:"text",
+        success: function(result) {
+           console.log("Got random: " + result)
+           playFile( result );
+        },
+        error: function(result) {
+            console.log("/random There was some error: " + result);
+            alert("error getting random file");
+        }
+    });
 }
 
 function songEnded() {
