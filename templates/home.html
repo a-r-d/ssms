@@ -10,15 +10,28 @@
         color: #008DC9;
     }
 
+
+    #audio_control {
+        
+    }
+
 </style>
 <div id="player">
     <!-- 
         https://developer.mozilla.org/en-US/docs/DOM/HTMLMediaElement
+
+        Need to add custom controls like:
+
+        http://www.terrillthompson.com/tests/html5-audio.html
+        http://terrillthompson.com/blog/32
     -->
     <audio controls id="audio_control" onended="songEnded()">
-        <source id="song_src" src="" type="audio/mpeg">
+        <source id="song_src"  type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
+    <div id="controls">
+
+    </div>
     <button onClick='prevSong()'>prev</button>
     <button onClick='nextSong()'>next</button>
     <button onClick='getRandom()'>random</button>

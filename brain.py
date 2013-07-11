@@ -141,6 +141,13 @@ def getDirHTML( message=None ):
         listing=listing,
         message=message
         )
+ 
+@app.route('/dir/json')
+def getDirJSON( message=None ):
+    listing = []
+    if request.method=='GET' and request.args.get("q") != None: 
+        listing = list_library(LIB_DIR, DB_DIR, request.args.get("q"))
+    return json.dumps( listing )
 
 @app.route('/dir/download')
 def getDirDownload( message=None ):
@@ -170,15 +177,7 @@ def getDirDownload( message=None ):
             as_attachment=True)
     else:
         return "Error"
- 
-@app.route('/dir/json')
-def getDirJSON( message=None ):
-    listing = []
-    if request.method=='GET' and request.args.get("q") != None: 
-        listing = list_library(LIB_DIR, DB_DIR, request.args.get("q"))
-    for l in listing:
-        l = pathMinusLibrary(LIB_DIR, l)
-    return json.dumps( listing )
+
 
 @app.route('/search')
 def searchHTML( message=None ):

@@ -121,7 +121,10 @@ def test_ext( filename ):
 ########################################################################################
 def pathMinusLibrary( lib_dir, path_dir):
     ## why do this? we dont want to serve whole to the world!
-    com_path = os.path.commonprefix([ os.path.normpath( lib_dir ), os.path.normpath( path_dir ) ]) #get temp dir path.
+    com_path = os.path.commonprefix([
+        os.path.normpath( lib_dir ), 
+        os.path.normpath( path_dir )
+        ]) 
     #print "common path: ", com_path
     after_lib_only = path_dir[len(com_path):]
     #print "after_lib_only: ", after_lib_only
