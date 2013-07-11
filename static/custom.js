@@ -9,10 +9,24 @@ var playing_song_path = "";
 var playing_song_dir = "";
 var current_browsed_dir = "";
 var dir_file_listing = [];
-var player_context = ""; // ['browser', 'search', 'custom']
+var player_context = ""; // ['browser', 'search', 'random', 'playlist']
+
+var CONTEXT_RANDOM = "random";
+var CONTEXT_SEARCH = "search";
+var CONTEXT_BROWSER = "browser";
+var CONTEXT_PLAYLIST = "playlist";
  
 $(document).ready( function(){
 
+    $('#query_submit').click( function(e){
+        e.preventDefault();
+        doSearch();
+    })
+
+    $('#query_form').submit( function(e){
+        e.preventDefault();
+        doSearch();
+    })
 
 });
 
@@ -58,7 +72,7 @@ function playFile( play_file ) {
 // all click events have a context.
 // other version of play file is ofter trigger via code.
 function playFileClick(play_file, context) {
-    if( context != 'auto' ) {
+    if( context != '' ) {
         player_context = context;
         console.log("Player context: " + context);
     }
@@ -119,6 +133,11 @@ function prevSong() {
     }
 }
 
+function songEnded() {
+    console.log("song ended");
+    nextSong();
+}
+
 function getRandom() {
     $.ajax({
         url: "/random",
@@ -134,9 +153,25 @@ function getRandom() {
     });
 }
 
-function songEnded() {
-    console.log("song ended");
-    nextSong();
+function doSearch() {
+    var term = $('#query').val();
+    if( term == "") return;
+
+    $.ajax({
+        url: "/search?q=" + term,
+        dataType:"text",
+        success: function(result) {
+           console.log("Got search: " + result)
+           $("#file_browser_table").empty().append(result);
+           current_browsed_dir = "";
+           player_context = CONTEXT_SEARCH;
+           updateBreadcrumbs();
+        },
+        error: function(result) {
+            console.log("/random There was some error: " + result);
+            alert("error getting random file");
+        }
+    });
 }
 
 function loadDir( directory_name ) {    

@@ -14,9 +14,9 @@
         <tr>
             <td>
                 {% if file.isDir %}
-                    <a href='javascript:void(0);' class='dir' onClick='loadDir("{{file.safePath}}")'>{{ file.name }}</a>
+                    <a href='javascript:void(0);' class='dir' onClick='loadDir("{{ file.safePath|replace( "\\", "/") }}")'>{{ file.name }}</a>
                 {% else %}
-                    <a href='javascript:void(0);' class='file' onClick='playFile("{{file.safePath}}")'>{{ file.name }}</a>
+                    <a href='javascript:void(0);' class='file' onClick='playFile("{{ file.safePath|replace( "\\", "/s") }}")'>{{ file.name }}</a>
                 {% endif %}
             </td>
             <td>

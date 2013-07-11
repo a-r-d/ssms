@@ -51,31 +51,35 @@ def list_library(lib_dir, db_dir, some_path=None):
             file_path = os.path.join( target_dir + "/" , a_file )
             if os.path.basename(file_path) not in skip_list:
                 if os.path.isdir( file_path ):
-                    listing.append({
-                        "name": a_file,
-                        'path': file_path,
-                        'safePath': pathMinusLibrary( lib_dir, file_path),
-                        'size': os.path.getsize( file_path ),
-                        'sizeStr': "%s kb" % str(os.path.getsize( file_path ) / 1000),
-                        'isDir': True,
-                        'isPlayable': isValidExtension( os.path.splitext( file_path )[1] ),
-                        'extension': os.path.splitext( file_path )[1]
-                        })
+                    listing.append( renderPath(lib_dir, file_path) )
                 else:
-                    listing.append({
-                        'name': a_file,
-                        'path': file_path,
-                        'safePath': pathMinusLibrary( lib_dir, file_path),
-                        'size': os.path.getsize( file_path ),
-                        'sizeStr': "%s kb" % str(os.path.getsize( file_path ) / 1000),
-                        'isDir': False,
-                        'isPlayable': isValidExtension( os.path.splitext( file_path )[1] ),
-                        'extension': os.path.splitext( file_path )[1]
-                        })
+                    listing.append( renderPath(lib_dir, file_path) )
     except Exception, e:
         log( str(e) )
-        
+    
+    ##print listing
     return listing
+
+"""
+Searches for a file by matching name:
+"""
+def file_search(LIB_DIR, search_string):
+    matches = []
+    for root, dirs, files in os.walk(LIB_DIR):
+        for file in files:
+            if file.lower().find( search_string.lower() ) != -1:
+                matches.append( os.path.join( root, file))
+    return matches 
+
+def file_search_html(LIB_DIR, search_string):
+    matches = file_search(LIB_DIR, search_string)
+
+    file_dict_for_template = []
+    for match in matches:
+        file_dict_for_template.append(renderPath(LIB_DIR, match ))
+
+    return file_dict_for_template
+    
     
 """
 Walks on the LIB_DIR to get a random file.
@@ -118,9 +122,9 @@ def test_ext( filename ):
 def pathMinusLibrary( lib_dir, path_dir):
     ## why do this? we dont want to serve whole to the world!
     com_path = os.path.commonprefix([ os.path.normpath( lib_dir ), os.path.normpath( path_dir ) ]) #get temp dir path.
-    print "common path: ", com_path
+    #print "common path: ", com_path
     after_lib_only = path_dir[len(com_path):]
-    print "after_lib_only: ", after_lib_only
+    #print "after_lib_only: ", after_lib_only
     return after_lib_only
     
 def isValidExtension( extension ):
@@ -129,8 +133,31 @@ def isValidExtension( extension ):
         return True
     return False
     
-    
-    
+# returns a dict of what I want my files to look like in my templates. 
+def renderPath( lib_dir, file_path ):
+    if os.path.isdir( file_path ):
+        return {
+            "name": os.path.basename( file_path ),
+            'path': file_path,
+            'safePath': pathMinusLibrary( lib_dir, file_path),
+            'size': os.path.getsize( file_path ),
+            'sizeStr': "%s kb" % str(os.path.getsize( file_path ) / 1000),
+            'isDir': True,
+            'isPlayable': isValidExtension( os.path.splitext( file_path )[1] ),
+            'extension': os.path.splitext( file_path )[1]
+        }
+    else:
+        return {
+            'name': os.path.basename( file_path ),
+            'path': file_path,
+            'safePath': pathMinusLibrary( lib_dir, file_path),
+            'size': os.path.getsize( file_path ),
+            'sizeStr': "%s kb" % str(os.path.getsize( file_path ) / 1000),
+            'isDir': False,
+            'isPlayable': isValidExtension( os.path.splitext( file_path )[1] ),
+            'extension': os.path.splitext( file_path )[1]
+        }
+
     
     
     

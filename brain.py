@@ -20,6 +20,7 @@ import subprocess # to restart server.
 import time # to wait for server.
 import json
 import random
+import urllib2
 
 #external libs:
 import sqlite3
@@ -30,6 +31,8 @@ from helpers import list_library
 from helpers import log
 from helpers import pathMinusLibrary
 from helpers import find_rand_file
+from helpers import file_search
+from helpers import file_search_html
 
 ###########################################################
 # get the dir name to be relative to.
@@ -114,7 +117,9 @@ def home( message=None ):
 def getFile(message=None ):
     # filename is the absolute path: 
     if request.method=='GET' and request.args.get("q") != None:  
-        file = os.path.normpath( LIB_DIR + request.args.get("q") )
+        path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("q")) )
+        #print "Serving file: ", path
+        file = path
         return send_file(file, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
     else:
         return "Error"
@@ -135,9 +140,28 @@ def getDirJSON( message=None ):
     listing = []
     if request.method=='GET' and request.args.get("q") != None: 
         listing = list_library(LIB_DIR, DB_DIR, request.args.get("q"))
+    for l in listing:
+        l = pathMinusLibrary(LIB_DIR, l)
     return json.dumps( listing )
 
-    
+@app.route('/search')
+def searchHTML( message=None ):
+    res = []
+    if request.method=='GET' and request.args.get("q") != None: 
+        res = file_search_html(LIB_DIR, request.args.get("q"))
+    return render_template(
+        'file_table.html', 
+        listing=res,
+        message=message
+        )
+
+@app.route('/search/json')
+def search( message=None ):
+    res = []
+    if request.method=='GET' and request.args.get("q") != None: 
+        res = file_search(LIB_DIR, request.args.get("q"))
+    return json.dumps( res )
+
 @app.route('/admin')
 def adminPanel():
     return render_template(
