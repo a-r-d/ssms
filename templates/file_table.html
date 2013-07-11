@@ -29,7 +29,38 @@
             </td>
             <td>
                 {% if file.isDir == False %}
-                    <button>Add</button>
+                    <div class="btn-group">
+                        <a class="btn btn-small btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
+                            +
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#">Add to Playlist</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" onClick='downloadFile("{{ file.safePath|replace( "\\", "/s") }}")'>Download file</a>
+                            </li>
+                            <li>
+                                <a href="#">Mark</a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="btn-group">
+                        <a class="btn btn-small btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                            +
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="javascript:void(0);" onClick='downloadFolder("{{ file.safePath|replace( "\\", "/s") }}")'>Download Folder</a>
+                            </li>
+                            <li>
+                                <a href="#">Mark</a>
+                            </li>
+                        </ul>
+                    </div>
                 {% endif %}
             </td>
         </tr>

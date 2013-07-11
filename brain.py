@@ -11,9 +11,7 @@ from flask import g
 # built in:
 from datetime import datetime
 import os 
-import glob
 import socket # to get hostname
-import zipfile #to deal with war file
 import shutil # to copy/del folders.
 import distutils.core #to copy tree silently
 import subprocess # to restart server.
@@ -21,6 +19,7 @@ import time # to wait for server.
 import json
 import random
 import urllib2
+import zipfile
 
 #external libs:
 import sqlite3
@@ -33,6 +32,7 @@ from helpers import pathMinusLibrary
 from helpers import find_rand_file
 from helpers import file_search
 from helpers import file_search_html
+from helpers import clean_folder
 
 ###########################################################
 # get the dir name to be relative to.
@@ -113,14 +113,21 @@ def home( message=None ):
         message=message
         )
         
-@app.route('/file')
+@app.route('/file') 
 def getFile(message=None ):
     # filename is the absolute path: 
     if request.method=='GET' and request.args.get("q") != None:  
         path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("q")) )
         #print "Serving file: ", path
-        file = path
-        return send_file(file, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
+        return send_file(path, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
+    else:
+        return "Error"
+
+@app.route('/file/download')
+def getFileDownload(message=None ):
+    if request.method=='GET' and request.args.get("q") != None:  
+        the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("q")) )
+        return send_file(the_path, mimetype="audio/mpeg", as_attachment=True)
     else:
         return "Error"
     
@@ -134,6 +141,35 @@ def getDirHTML( message=None ):
         listing=listing,
         message=message
         )
+
+@app.route('/dir/download')
+def getDirDownload( message=None ):
+    print "Serving folder"
+    the_zip = None
+    if request.method=='GET' and request.args.get("q") != None: 
+        path = os.path.normpath( LIB_DIR + "/" + request.args.get("q"))
+        print "Dir path: ", path
+        #open zip file
+        clean_folder( TEMP_DIR )
+        zip_path = TEMP_DIR + "/" + os.path.basename( path ) + ".zip" # create a location/ name for the zip file.
+        print "Zip: ", zip_path
+        the_zip = zipfile.ZipFile(zip_path, 'w') #make a zip file of this name
+        #for f in os.listdir( path ):
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                print "loading file to zip: ", os.path.normpath(os.path.join(root, file))
+                com_path = os.path.commonprefix([ os.path.normpath( path + "/junk" ), os.path.normpath(os.path.join(root, file)) ]) #the common part.
+                new_file_name = os.path.join(root, file)[len(com_path):] #strip off front.
+                the_zip.write(os.path.join(root, file), new_file_name) # (path to copy from, new file name)
+
+        the_zip.close()
+
+        return send_file(
+            zip_path, 
+            mimetype="application/octet-stream", 
+            as_attachment=True)
+    else:
+        return "Error"
  
 @app.route('/dir/json')
 def getDirJSON( message=None ):

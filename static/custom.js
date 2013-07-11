@@ -143,7 +143,7 @@ function getRandom() {
         url: "/random",
         dataType:"text",
         success: function(result) {
-           console.log("Got random: " + result)
+           //console.log("Got random: " + result)
            playFile( result );
         },
         error: function(result) {
@@ -161,7 +161,7 @@ function doSearch() {
         url: "/search?q=" + term,
         dataType:"text",
         success: function(result) {
-           console.log("Got search: " + result)
+           //console.log("Got search: " + result)
            $("#file_browser_table").empty().append(result);
            current_browsed_dir = "";
            player_context = CONTEXT_SEARCH;
@@ -241,7 +241,14 @@ function addUp(arr, position){
     }
 }
 
-
+function downloadFile( src ){
+    window.open("/file/download?q=" + src, '_blank');
+    window.focus();
+}
+function downloadFolder( src ){
+    window.open("/dir/download?q=" + src, '_blank');
+    window.focus();
+}
 
 
 ///////////////////////////////////////////////////////////////////

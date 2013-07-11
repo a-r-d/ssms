@@ -158,6 +158,23 @@ def renderPath( lib_dir, file_path ):
             'extension': os.path.splitext( file_path )[1]
         }
 
+"""
+Cleans out a folder:
+"""
+def clean_folder( path ):
+    folder = path
+    for the_file in os.listdir(folder):
+        file_path = os.path.join(folder, the_file)
+        try:
+            #if os.path.isfile(file_path):
+            if os.path.isdir(file_path):
+                shutil.rmtree( file_path )
+            else:
+                os.unlink( file_path )
+        except Exception, e:
+            print e
+            log( "clean_folder fail- " + str(e) )
+
     
     
     
