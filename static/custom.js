@@ -262,6 +262,27 @@ function uploadToLocation( src ){
      }, 100);
 }
 
+function makeNewDir( src ){
+    var f_name =prompt("Please enter a new folder Name","");
+    if (f_name != null && f_name != ""){
+        $.ajax({
+            url: "/newdir",
+            data: {
+                location: src,
+                name: f_name
+            },
+            dataType:"html",
+            success: function(result) {
+                alert(result);
+                loadDir( src );
+            },
+            error: function(result) {
+                console.log("/newdir There was some error: " + result);
+                alert(result);
+            }
+        });
+    }
+}
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////

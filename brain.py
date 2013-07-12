@@ -221,6 +221,20 @@ def getRandom(message=None ):
     file_path = pathMinusLibrary(LIB_DIR, the_file)
     return file_path
 
+@app.route('/newdir')
+def nakeDir(message=None ):
+    try:
+        if request.method=='GET' and request.args.get("name") != None and request.args.get("location") != None: 
+            new_dir_path = os.path.normpath( LIB_DIR + "/" + request.args.get("location") + "/" + request.args.get("name"))
+            os.mkdir(new_dir_path)
+            return "Success"
+        else:
+            return "Error- name or location not set"
+    except Exception, e:
+        traceback.print_exc()
+        print str(e)
+        return "Error: " + str(e)
+
 @app.route("/upload/form")
 def getUploadForm(message=None):
     if request.method=='GET' and request.args.get("q") != None: 
@@ -265,12 +279,12 @@ def postUploadFile(message=None):
                 return "Filetype not allowed!"
         else:
             return render_template(
-                    'uploader_form.html', 
-                    location="",
-                    message="Nothing Posted!"
-                )
+                'uploader_form.html', 
+                location="",
+                message="Nothing Posted!"
+            )
     except Exception, e:
-        #traceback.print_exc()
+        traceback.print_exc()
         print str(e)
         return "error: " + str(e)
 

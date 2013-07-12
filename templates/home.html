@@ -50,7 +50,20 @@
     </form>
 </div>
 <div id="extra_menu">
-    <button onClick="uploadToLocation('')">upload to home</button>
+    <div class="btn-group">
+        <a class="btn btn-small btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+            Home folder options
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="javascript:void(0);" onClick="uploadToLocation('')">upload to home</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" onClick="makeNewDir('')">new folder</a>
+            </li>
+        </ul>
+    </div>
 </div>
 <h3>
     Browse:
