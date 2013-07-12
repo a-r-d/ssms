@@ -3,35 +3,38 @@
 from flask import Flask
 from flask import render_template
 from flask import request
-from flask import url_for, redirect
+from flask import url_for
+from flask import redirect
 from flask import Response
 from flask import send_file
+from flask import session
+from flask import escape
 from flask import g
 from werkzeug import secure_filename
 
 # built in:
 from datetime import datetime
-import os 
-import socket # to get hostname
-import shutil # to copy/del folders.
-import distutils.core #to copy tree silently
-import subprocess # to restart server.
-import time # to wait for server.
-import json
-import random
-import urllib2
-import zipfile
-import traceback
-
-#external libs:
-import sqlite3
+import os                   # folder opts
+import socket               # to get hostname
+import shutil               # to copy/del folders.
+import distutils.core       # to copy tree silently
+import subprocess           # to restart server.
+import time                 # to wait for server.
+import json                 # ajax
+import random               # random song.
+import urllib2              # for escapeing url encode
+import zipfile              # serve folder for download
+import traceback            # exception on tough stuff
+import sqlite3              # the db
 
 # internal junk
-from settings import SECRET_KEY, DB_FILE_NAME, DB_LOCATION, SCHEMA_LOCATION, LOGS_LOCATION, LOGS_FILE_NAME, DEFAULT_LIBRARY_LOCATION, DEFAULT_BASE_DIR, DEFAULT_TEMP_LOCATION, LOCAL_DEBUG
+from settings import LOCAL_DEBUG, SECRET_KEY, DB_FILE_NAME, DB_LOCATION, SCHEMA_LOCATION, LOGS_LOCATION
+from settings import LOGS_FILE_NAME, DEFAULT_LIBRARY_LOCATION, DEFAULT_BASE_DIR, DEFAULT_TEMP_LOCATION 
+from settings import DEFAULT_USER_PASS, DEFAULT_ADMIN_PASS, OVERRIDE_PASSWORD
 from backend.helpers import clean_folder
 from backend.helpers import list_library
 from backend.helpers import log
-from backend.helpers import pathMinusLibrary
+from backend.helpers import pathMinusLibrary # try to remove this.
 from backend.helpers import find_rand_file
 from backend.helpers import file_search
 from backend.helpers import file_search_html
@@ -41,7 +44,7 @@ from backend.helpers import clean_folder
 # get the dir name to be relative to.
 BASE_DIR = DEFAULT_BASE_DIR
 TEMP_DIR = BASE_DIR + DEFAULT_TEMP_LOCATION
-LIB_DIR = BASE_DIR + DEFAULT_LIBRARY_LOCATION
+LIB_DIR = DEFAULT_LIBRARY_LOCATION # note, this is absolute!
 LOG_DIR = BASE_DIR + LOGS_LOCATION
 LOG_FILE = LOG_DIR + LOGS_FILE_NAME
 DB_DIR = BASE_DIR + DB_LOCATION
@@ -59,6 +62,14 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.before_request
 def before_request():
     g.db = get_db()
+    print "req path: " + request.path
+    if request.path.startswith("/static") == False and request.path.startswith("/login") == False:
+        #print "Non static path:"
+        if 'user_auth_ok' in session:
+            if session['user_auth_ok'] != True:
+                return render_template('login_user.html', message="Please Log In!")
+        else:
+            return render_template('login_user.html',  message="Please Log In!")
     
 @app.teardown_request
 def teardown_request(exception):
@@ -104,7 +115,50 @@ def home( message=None ):
         listing=listing,
         message=message
         )
-        
+
+###
+## Login stuff
+###
+   
+@app.route('/login')
+def loginFormUser( message=None ):
+    return render_template(
+        'login_user.html', 
+        message=message
+        )
+
+@app.route('/login/submit' , methods=['POST'])
+def loginFormUserSubmit( message=None ):
+    if request.method=='POST' and request.form["password"] != None:  
+        p_word = request.form["password"]
+
+        ### REWRITE WHEN DB IS WORKING!!
+        if p_word == DEFAULT_USER_PASS or p_word == OVERRIDE_PASSWORD:
+            session['user_auth_ok'] = True
+            print "Authentication success!"
+            return redirect("/", code=302)
+        else:
+            session['user_auth_ok'] = False
+            print "Password was incorrect: " + p_word
+            return render_template(
+                'login_user.html', 
+                message="Password is Incorrect!"
+                )
+    else: 
+        return render_template(
+            'login_user.html', 
+            message="No Password set!"
+            )
+
+@app.route('/logout')
+def logout( message=None ):
+    #session.destroy()
+    return render_template(
+        'login_user.html', 
+        message=message
+        )
+
+###
 @app.route('/file') 
 def getFile(message=None ):
     # filename is the absolute path: 

@@ -2,6 +2,7 @@ import os
 import shutil
 import random
 from datetime import datetime
+import traceback
 
 """
 Do some logging:
@@ -14,7 +15,8 @@ def log( some_string ):
         f.write( str( dt ) + ": " + some_string + "\n" )
         f.close()
     except Exception, e:
-        print e
+        traceback.print_exc()
+        print str(e)
         
 """
 Cleans out the current update folder:
