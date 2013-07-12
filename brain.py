@@ -27,14 +27,14 @@ import traceback
 import sqlite3
 
 # internal junk
-from helpers import clean_folder
-from helpers import list_library
-from helpers import log
-from helpers import pathMinusLibrary
-from helpers import find_rand_file
-from helpers import file_search
-from helpers import file_search_html
-from helpers import clean_folder
+from backend.helpers import clean_folder
+from backend.helpers import list_library
+from backend.helpers import log
+from backend.helpers import pathMinusLibrary
+from backend.helpers import find_rand_file
+from backend.helpers import file_search
+from backend.helpers import file_search_html
+from backend.helpers import clean_folder
 
 ###########################################################
 # get the dir name to be relative to.
@@ -245,24 +245,24 @@ def postUploadFile(message=None):
     print "Got file upload!"
     try:
         if request.method == 'POST':
-            loc = request.args.get("location")
+            loc = request.form['location']
             print "file loc: ", loc
-            print request.args
             if loc == None:
-                return render_template(
-                    'uploader_form.html', 
-                    location="",
-                    message="No location to upload set!"
-                )
-            file = request.files['file']
+                print "No location set."
+                return "Error: no location set"
+
+            file = request.files['files']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 print filename
-                upload_to = os.path.normpath( os.path.join( LIB_DIR, src))
+                upload_to = os.path.normpath( LIB_DIR + "/" + loc)
+                print "upload to: " + upload_to
                 file.save(os.path.join(upload_to, filename))
-                listing = list_library(LIB_DIR, DB_DIR, src)
+                listing = list_library(LIB_DIR, DB_DIR, loc)
                 print listing
-                return json.dumps( listing )
+                return json.dumps( { "files":listing } ) #YAY!
+            else:
+                return "Filetype not allowed!"
         else:
             return render_template(
                     'uploader_form.html', 
@@ -270,8 +270,9 @@ def postUploadFile(message=None):
                     message="Nothing Posted!"
                 )
     except Exception, e:
-        traceback.print_exc()
+        #traceback.print_exc()
         print str(e)
+        return "error: " + str(e)
 
     
         
