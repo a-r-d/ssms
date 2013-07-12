@@ -250,6 +250,18 @@ function downloadFolder( src ){
     window.focus();
 }
 
+function uploadToLocation( src ){
+    var w = window.open("/upload/form?q=" + src, "File Multi-Uploader!", "width=500,height=500,left=200,top=100");
+    var watchClose = setInterval(function() {
+        try {
+            if (w.closed) {
+             clearTimeout(watchClose);
+             loadDir( src );
+            }
+        } catch (e) {}
+     }, 100);
+}
+
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////

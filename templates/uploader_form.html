@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<script src="{{ url_for('static', filename='jQuery-File-Upload-master/js/vendor/jquery.ui.widget.js') }}"></script>
+<script src="{{ url_for('static', filename='jQuery-File-Upload-master/js/jquery.iframe-transport.js') }}"></script>
+<script src="{{ url_for('static', filename='jQuery-File-Upload-master/js/jquery.fileupload.js') }}"></script>
+
+<input id="fileupload" type="file" name="files" data-url="/upload/file" multiple>
+
+<script>
+$(function () {
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        sequentialUploads: true,
+        formData: {
+        	location: "{{ location }}"
+        },
+        done: function (e, data) {
+        	console.log(e);
+        	console.log(data);
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo($("#dir_listing"));
+            });
+        },
+        progressall: function (e, data) {
+	        var progress = parseInt(data.loaded / data.total * 100, 10);
+	        $('#progress .bar').css(
+	            'width',
+	            progress + '%'
+	        );
+	    }// prog
+    });// fu
+});/// ready
+</script>
+
+<style type="text/css">
+	.bar {
+	    height: 18px;
+	    background: green;
+	}
+</style>
+
+<div id="progress">
+    <div class="bar" style="width: 0%;"></div>
+</div>
+
+<div id="dir_listing">
+</div>
+
+{% endblock %}

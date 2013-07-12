@@ -7,6 +7,7 @@ from flask import url_for, redirect
 from flask import Response
 from flask import send_file
 from flask import g
+from werkzeug import secure_filename
 
 # built in:
 from datetime import datetime
@@ -20,6 +21,7 @@ import json
 import random
 import urllib2
 import zipfile
+import traceback
 
 #external libs:
 import sqlite3
@@ -58,6 +60,9 @@ if not os.path.exists(DATABASE):
 
 # create app:
 app = Flask(__name__)
+
+UPLOAD_FOLDER = TEMP_DIR
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ###########################################################
 """
@@ -215,11 +220,67 @@ def getRandom(message=None ):
     the_file = find_rand_file(LIB_DIR)
     file_path = pathMinusLibrary(LIB_DIR, the_file)
     return file_path
+
+@app.route("/upload/form")
+def getUploadForm(message=None):
+    if request.method=='GET' and request.args.get("q") != None: 
+        loc = request.args.get("q")
+        return render_template(
+            'uploader_form.html', 
+            location=loc,
+            message=message
+        )
+    else:
+        return render_template(
+            'uploader_form.html', 
+            location="",
+            message=message
+        )
+
+
+ALLOWED_EXTENSIONS = set(['mp3', 'm4a', 'mp3', 'ogg', 'wma', 'mov'])
+
+@app.route("/upload/file", methods=['GET', 'POST'])
+def postUploadFile(message=None):
+    print "Got file upload!"
+    try:
+        if request.method == 'POST':
+            loc = request.args.get("location")
+            print "file loc: ", loc
+            print request.args
+            if loc == None:
+                return render_template(
+                    'uploader_form.html', 
+                    location="",
+                    message="No location to upload set!"
+                )
+            file = request.files['file']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                print filename
+                upload_to = os.path.normpath( os.path.join( LIB_DIR, src))
+                file.save(os.path.join(upload_to, filename))
+                listing = list_library(LIB_DIR, DB_DIR, src)
+                print listing
+                return json.dumps( listing )
+        else:
+            return render_template(
+                    'uploader_form.html', 
+                    location="",
+                    message="Nothing Posted!"
+                )
+    except Exception, e:
+        traceback.print_exc()
+        print str(e)
+
+    
         
 ############################################################################
 # end routes
 ############################################################################
-
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
     
 #############################################################
 if __name__ == '__main__':
