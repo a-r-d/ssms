@@ -7,4 +7,5 @@ TO DO
 + ~~upload a folder~~
 + ~~download a file~~
 + ~~download a folder~~
++ ~~mkdir~~
 + stream as .ogg for firefox.

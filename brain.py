@@ -27,6 +27,7 @@ import traceback
 import sqlite3
 
 # internal junk
+from settings import SECRET_KEY, DB_FILE_NAME, DB_LOCATION, SCHEMA_LOCATION, LOGS_LOCATION, LOGS_FILE_NAME, DEFAULT_LIBRARY_LOCATION, DEFAULT_BASE_DIR, DEFAULT_TEMP_LOCATION, LOCAL_DEBUG
 from backend.helpers import clean_folder
 from backend.helpers import list_library
 from backend.helpers import log
@@ -38,48 +39,23 @@ from backend.helpers import clean_folder
 
 ###########################################################
 # get the dir name to be relative to.
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-TEMP_DIR = BASE_DIR + "/temp"
-LIB_DIR = BASE_DIR + "/library"
-LOG_DIR = BASE_DIR + "/logs"
-LOG_FILE = LOG_DIR + "/out.log"
-DB_DIR = BASE_DIR + "/db"
-DATABASE = BASE_DIR + "/db/main.db"
-DB_SCHEMA = BASE_DIR + "/db/schema.sql"
-
-LOCAL_DEBUG = False
-
-## make temp dirs, logs, ect - all on 'ignore' in the repo..:
-dirs = [TEMP_DIR, LIB_DIR, LOG_DIR, DB_DIR]
-for d in dirs:
-    if not os.path.exists(d):
-        os.makedirs(d)
-        
-if not os.path.exists(DATABASE):
-    init_db()
+BASE_DIR = DEFAULT_BASE_DIR
+TEMP_DIR = BASE_DIR + DEFAULT_TEMP_LOCATION
+LIB_DIR = BASE_DIR + DEFAULT_LIBRARY_LOCATION
+LOG_DIR = BASE_DIR + LOGS_LOCATION
+LOG_FILE = LOG_DIR + LOGS_FILE_NAME
+DB_DIR = BASE_DIR + DB_LOCATION
+DATABASE = BASE_DIR + DB_LOCATION + DB_FILE_NAME
+DB_SCHEMA = BASE_DIR + SCHEMA_LOCATION
 
 # create app:
 app = Flask(__name__)
-
+app.secret_key = SECRET_KEY
 UPLOAD_FOLDER = TEMP_DIR
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ###########################################################
-"""
-
-Default templating is jinja2:
-http://jinja.pocoo.org/docs/templates/
-
-Default port for Flask is 5000
-
-Notable static files:
-url_for('static', filename='custom.css')
-url_for('static', filename='custom.js')
-url_for('static', filename='bootstrap_readable.min.css')
-url_for('static', filename='jquery-1.9.1.min.js')
-
-"""
-###########################################################
+### DB Layer, and request before + after.
 @app.before_request
 def before_request():
     g.db = get_db()
@@ -90,7 +66,6 @@ def teardown_request(exception):
     if db is not None:
         db.close()
         
-    
 def get_db():
     db = getattr(g, '_main_db', None)
     if db is None:
@@ -107,6 +82,18 @@ def init_db():
         with app.open_resource(DB_SCHEMA, mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
+
+## First run setup:
+## make temp dirs, logs, ect - all on 'ignore' in the repo..:
+dirs = [TEMP_DIR, LIB_DIR, LOG_DIR, DB_DIR]
+for d in dirs:
+    if not os.path.exists(d):
+        print "Creating location: " + d
+        os.makedirs(d)
+        
+if not os.path.exists(DATABASE):
+    print "Creating database at: " + DATABASE
+    init_db()
         
 ###########################################################
 @app.route('/')
@@ -203,7 +190,7 @@ def search( message=None ):
     return json.dumps( res )
 
 @app.route('/admin')
-def adminPanel():
+def adminPanel( message=None ):
     return render_template(
         'admin.html', 
         message=message
@@ -251,9 +238,6 @@ def getUploadForm(message=None):
             message=message
         )
 
-
-ALLOWED_EXTENSIONS = set(['mp3', 'm4a', 'mp3', 'ogg', 'wma', 'mov'])
-
 @app.route("/upload/file", methods=['GET', 'POST'])
 def postUploadFile(message=None):
     print "Got file upload!"
@@ -287,13 +271,12 @@ def postUploadFile(message=None):
         traceback.print_exc()
         print str(e)
         return "error: " + str(e)
-
-    
         
 ############################################################################
 # end routes
 ############################################################################
 def allowed_file(filename):
+    ALLOWED_EXTENSIONS = set(['mp3', 'm4a', 'mp3', 'ogg', 'wma', 'mov'])
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
     
