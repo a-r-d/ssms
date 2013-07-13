@@ -2,38 +2,95 @@
 
 {% block body %}
 
+<div class="row-fluid">
+    <div class="span12">
+        <h3>
+            SSMS Configuration
+        </h3>
+        <script>
+            $(document).ready( function (){
 
-<div class="row">
-    <div class="span12">
-        <h2>
-            SSMS Admin Panel
-        </h2>
-    </div>
-</div>
-<div class="row">
-    <div class="span12">
-        <hr />
-    </div>
-</div>
-<div class="row">
-    <div class="span12">
-        <form>
-        
-            <table>
-            
-            
+                $('#update_settings').click( function(e){
+                    e.preventDefault();
+
+                    // do some ajax.
+                    var original_lib_path = "{{ LIB_PATH }}";
+                    var lib_path = $('#libpath').val();
+                    var u_pass = $("#userpass1").val();
+                    var a_pass = $('#adminpass1').val();
+
+                    var data = {};
+                    if(original_lib_path != lib_path ) 
+                        data.lib_path = lib_path;
+                    if( u_pass != "") 
+                        data.u_pass = u_pass;
+                    if( a_pass != "")
+                        data.a_pass = a_pass;
+
+                    $.ajax({
+                        url: "/admin/post",
+                        data: data,
+                        type: "POST",
+                        dataType:"html"
+                    }).done( function( res ) {
+                        console.log(res);
+                    }).fail( function( res ){
+                        console.log("/admin/post There was some error: " + res);
+                        alert(res);
+                    });
+                });
+
+
+            });
+
+        </script>
+
+            <table class="table table-bordered">
+                <tr>
+                    <td>
+                        Library path:
+                    </td>
+                    <td>
+                        <input type="text" name="libpath" id="libpath" value="{{ LIB_PATH }}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        User Password:
+                    </td>
+                    <td>
+                        <input type="password" name="userpass1" id="userpass1" />
+                        <br />
+                        *<small>{{ user_pass_note }}</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Admin Password:
+                    </td>
+                    <td>
+                        <input type="password" name="adminpass1" id="adminpass1" />
+                        <br />
+                        *<small>{{ admin_pass_note }}</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        <button class="btn btn-success" id="update_settings">Update Settings</button>
+                    </td>
+                </tr>
             </table>
         
-        </form>
     </div>
 </div>
-<div class="row">
+<div class="row-fluid">
     <div class="span12">
         <hr />
     </div>
 </div>
-
-
 
 
 {% endblock %}

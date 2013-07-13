@@ -125,7 +125,57 @@ def loginFormUser( message=None ):
     return render_template(
         'login_user.html', 
         message=message
-        )
+    )
+
+@app.route('/admin')
+def adminPanel( message=None ):
+    if 'admin_auth_ok' in session and session["admin_auth_ok"] == True:
+        #check to see if the passwords are set in settings or DB
+        return render_template('admin.html', 
+            message=message,
+            LIB_PATH= os.path.normpath(LIB_DIR),
+            user_pass_note="Password set in settings.py file",
+            admin_pass_note="Password set in settings.py file",
+            )
+    else:
+        return render_template('login_admin.html', message="You must authenticate first!")
+
+# we will use ajax here.
+@app.route('/admin/post', methods=['POST'])
+def adminConfigPost( message=None ):
+    if 'admin_auth_ok' in session and session["admin_auth_ok"] == True:
+        # process the form:
+        if "u_pass" in request.form:
+            print "updating user pass"
+        if "a_pass" in request.form:
+            print "updating admin pass"
+        if "lib_path" in request.form:
+            if os.path.normpath( LIB_DIR ) != os.path.normpath( request.form["lib_path"] ):
+                print "updating lib dir"
+
+        return "Success"
+    else:
+        return "User not authenticated"
+    
+
+@app.route('/admin/auth', methods=['POST'])
+def adminPanelAuth( message=None ):
+    if 'password' in request.form:
+        p_admin_test = request.form["password"]
+        if p_admin_test == DEFAULT_ADMIN_PASS or p_admin_test == OVERRIDE_PASSWORD:
+            session["admin_auth_ok"] = True
+            return adminPanel()
+        else:
+            session["admin_auth_ok"] = False
+            return render_template(
+                'login_admin.html', 
+                message="Password Incorrect!"
+                )
+    else:
+        return render_template(
+            'login_admin.html', 
+            message="Password not set!"
+            )
 
 @app.route('/login/submit' , methods=['POST'])
 def loginFormUserSubmit( message=None ):
@@ -243,12 +293,6 @@ def search( message=None ):
         res = file_search(LIB_DIR, request.args.get("q"))
     return json.dumps( res )
 
-@app.route('/admin')
-def adminPanel( message=None ):
-    return render_template(
-        'admin.html', 
-        message=message
-        )
         
 @app.route('/randomfile')
 def getRandomFile(message=None ):
