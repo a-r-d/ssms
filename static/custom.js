@@ -141,8 +141,7 @@ function prevSong() {
         arr_to_iter = search_file_array;
     } else if( player_context == 'playlist') {
         arr_to_iter = playlist_file_array;
-    }
-    */
+    }*/
     console.log("Playing previous song");
     if( arr_to_iter.length < 2 ) {
         return;

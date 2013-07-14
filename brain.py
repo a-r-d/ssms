@@ -202,7 +202,9 @@ def loginFormUserSubmit( message=None ):
 
 @app.route('/logout')
 def logout( message=None ):
-    #session.destroy()
+    #don't bother with destroying session.
+    session['user_auth_ok'] = False
+    session["admin_auth_ok"] = False
     return render_template(
         'login_user.html', 
         message=message
