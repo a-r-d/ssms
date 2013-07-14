@@ -62,7 +62,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.before_request
 def before_request():
     g.db = get_db()
-    print "req path: " + request.path
+    #print "req path: " + request.path
     if request.path.startswith("/static") == False and request.path.startswith("/login") == False:
         #print "Non static path:"
         if 'user_auth_ok' in session:

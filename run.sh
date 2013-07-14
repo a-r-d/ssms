@@ -1,1 +1,1 @@
-python /update-app/oort-update/server.py
+python /opt/ssms/server.py

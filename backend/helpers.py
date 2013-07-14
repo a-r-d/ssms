@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import os
 import shutil
 import random
@@ -53,14 +54,20 @@ def list_library(lib_dir, db_dir, some_path=None):
             file_path = os.path.join( target_dir + "/" , a_file )
             if os.path.basename(file_path) not in skip_list:
                 if os.path.isdir( file_path ):
-                    listing.append( renderPath(lib_dir, file_path) )
+                    listing.append( file_path )
                 else:
-                    listing.append( renderPath(lib_dir, file_path) )
+                    listing.append( file_path )
     except Exception, e:
+        print str(e)
         log( str(e) )
     
     ##print listing
-    return listing
+    listing.sort()
+    made_objects = []
+    for l in listing:
+        made_objects.append( renderPath(lib_dir, l) )
+        
+    return made_objects
 
 """
 Searches for a file by matching name:
@@ -69,8 +76,14 @@ def file_search(LIB_DIR, search_string):
     matches = []
     for root, dirs, files in os.walk(LIB_DIR):
         for file in files:
-            if file.lower().find( search_string.lower() ) != -1:
-                matches.append( os.path.join( root, file))
+            try:
+                if file.encode('utf8').lower().find( search_string.encode('utf8').lower() ) != -1:
+                    matches.append( os.path.join( root, file))
+            except Exception, e:
+                print "Error on search: ", str(e)
+                continue
+    #sort it:
+    matches.sort()
     return matches 
 
 def file_search_html(LIB_DIR, search_string):
