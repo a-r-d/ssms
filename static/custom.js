@@ -273,6 +273,13 @@ function downloadFile( src ){
     window.open("/file/download?q=" + src, '_blank');
     window.focus();
 }
+
+function downloadNowPlaying(){
+    // shold be this: playing_song_path
+    window.open("/file/download?q=" + playing_song_path, '_blank');
+    window.focus();
+}
+
 function downloadFolder( src ){
     window.open("/dir/download?q=" + src, '_blank');
     window.focus();
