@@ -28,6 +28,32 @@ $(document).ready( function(){
         doSearch();
     })
 
+    $('#query').autocomplete({
+      source: function( request, response ) {
+
+        console.log("Performing search:");
+        var search_term = $('#query').val();
+        
+        $.ajax({
+          url: "/search/json",
+          dataType: "json",
+          data: {
+            q: search_term
+          },
+          minLength: 3,
+          success: function( data ) {
+            console.log( data );
+            response( $.map( data.files, function( item ) {
+                console.log( item );
+              return {
+                label: item.name,
+                value: item.name
+              }
+            }));
+          }
+        });
+      }
+    });
 });
 
 ///////////////////////////////////////////////////////
@@ -47,6 +73,8 @@ function pauseSong() {
 function reloadSong() {
     document.getElementById("audio_control").load();
 }
+
+
 
 function playFile( play_file ) {
     // a hack:

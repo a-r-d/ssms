@@ -16,7 +16,7 @@
                 {% if file.isDir %}
                     <a href='javascript:void(0);' class='dir' onClick='loadDir("{{ file.safePath|replace( "\\", "/") }}")'>{{ file.name }}</a>
                 {% else %}
-                    <a href='javascript:void(0);' class='file' onClick='playFile("{{ file.safePath|replace( "\\", "/s") }}")'>{{ file.name }}</a>
+                    <a href='javascript:void(0);' class='file' onClick='playFile("{{ file.safePath|replace( "\\", "/") }}")'>{{ file.name }}</a>
                 {% endif %}
             </td>
             <td>
@@ -39,7 +39,7 @@
                                 <a href="#">Add to Playlist</a>
                             </li>
                             <li>
-                                <a href="javascript:void(0);" onClick='downloadFile("{{ file.safePath|replace( "\\", "/s") }}")'>Download file</a>
+                                <a href="javascript:void(0);" onClick='downloadFile("{{ file.safePath|replace( "\\", "/") }}")'>Download file</a>
                             </li>
                             <li>
                                 <a href="#">Mark</a>
@@ -54,13 +54,13 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="javascript:void(0);" onClick='downloadFolder("{{ file.safePath|replace( "\\", "/s") }}")'>Download Folder</a>
+                                <a href="javascript:void(0);" onClick='downloadFolder("{{ file.safePath|replace( "\\", "/") }}")'>Download Folder</a>
                             </li>
                             <li>
-                                <a href="javascript:void(0);" onClick='uploadToLocation("{{ file.safePath|replace( "\\", "/s") }}")'>Upload Here</a>
+                                <a href="javascript:void(0);" onClick='uploadToLocation("{{ file.safePath|replace( "\\", "/") }}")'>Upload Here</a>
                             </li>
                             <li>
-                                <a href="javascript:void(0);" onClick='makeNewDir("{{ file.safePath|replace( "\\", "/s") }}")'>New Folder Here</a>
+                                <a href="javascript:void(0);" onClick='makeNewDir("{{ file.safePath|replace( "\\", "/") }}")'>New Folder Here</a>
                             </li>
                         </ul>
                     </div>

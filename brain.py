@@ -275,6 +275,14 @@ def getDirDownload( message=None ):
         return "Error"
 
 
+@app.route('/search/json')
+def search( message=None ):
+    res = []
+    if request.method=='GET' and request.args.get("q") != None: 
+        res = file_search_html(LIB_DIR, request.args.get("q"))
+    return json.dumps({"files": res})
+
+
 @app.route('/search')
 def searchHTML( message=None ):
     res = []
@@ -285,15 +293,7 @@ def searchHTML( message=None ):
         listing=res,
         message=message
         )
-
-@app.route('/search/json')
-def search( message=None ):
-    res = []
-    if request.method=='GET' and request.args.get("q") != None: 
-        res = file_search(LIB_DIR, request.args.get("q"))
-    return json.dumps( res )
-
-        
+    
 @app.route('/randomfile')
 def getRandomFile(message=None ):
     # filename is the absolute path: 

@@ -1,0 +1,63 @@
+NEWS
+----
+
+New in 1.0.12:
+
+* Context.optionUseKerberos
+* Context.optionFallbackAfterKerberos
+
+New in 1.0.11:
+
+* read/iternext now use Bytes type
+
+New in 1.0.10:
+
+* smbc.NoSpaceError
+* Now compiles against Python 3
+
+New in 1.0.9:
+
+* iteration file read
+* rewrite tests for python nose
+* fixed stat portability issue
+* smbc.NoEntryError
+* smbc.ExistsError
+* smbc.NotEmptyError
+* smbc.TimedOutError
+* File.seek() and File.lseek()
+
+New in 1.0.8:
+
+* Context.chmod()
+* Context.rename()
+* Context.unlink()
+* Context.creat()
+
+New in 1.0.7:
+
+* Context.open: omissible flags and mode
+* File: omissible flags and mode
+* File.read()
+* smbc.PermissionError
+* Context.mkdir()
+* Context.stat()
+* File.fstat()
+* File.write()
+* File.close()
+
+New in 1.0.4:
+
+* Context.workgroup
+* Context.netbiosName
+
+New in 1.0.2:
+
+* Context.Debug -> Context.debug
+* Context.FunctionAuthData -> Context.functionAuthData
+* Context.OptionDebugToStderr -> Context.optionDebugToStderr
+* Context.OptionNoAutoAnonymousLogin -> Context.optionNoAutoAnonymousLogin
+
+New in 1.0.1:
+
+* Context.open()
+
