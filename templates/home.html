@@ -26,7 +26,9 @@
         http://terrillthompson.com/blog/32
     -->
     <audio controls id="audio_control" onended="songEnded()">
-        <source id="song_src"  type="audio/mpeg">
+        <source id="song_src"  type="audio/mpeg" src="{{ url_for('static', filename='test-beep.mp3') }}">
+        <!-- this is esentially a hack to get firefox to show the media player -->
+        <source id="song_src_fallback"  type="audio/ogg" src="{{ url_for('static', filename='test-bunny.ogg') }}">
         Your browser does not support the audio element.
     </audio>
     <div id="controls">
