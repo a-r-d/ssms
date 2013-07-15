@@ -1,3 +1,4 @@
 flask>=0.9
 tornado>=3.1
+sqlalchemy>=0.8
 pysmbc>=1.0

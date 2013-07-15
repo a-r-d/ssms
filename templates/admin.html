@@ -12,7 +12,8 @@
 
                 $('#update_settings').click( function(e){
                     e.preventDefault();
-
+                    $('#loader_img').show();
+                    $('#check_mark_img').hide();
                     // do some ajax.
                     var original_lib_path = "{{ LIB_PATH }}";
                     var lib_path = $('#libpath').val();
@@ -34,9 +35,12 @@
                         dataType:"html"
                     }).done( function( res ) {
                         console.log(res);
+                        $('#loader_img').hide();
+                        $('#check_mark_img').show();
                     }).fail( function( res ){
                         console.log("/admin/post There was some error: " + res);
                         alert(res);
+                        $('#loader_img').hide();
                     });
                 });
 
@@ -72,6 +76,7 @@
                         <input type="password" name="adminpass1" id="adminpass1" />
                         <br />
                         *<small>{{ admin_pass_note }}</small>
+                        
                     </td>
                 </tr>
                 <tr>
@@ -80,6 +85,10 @@
                     </td>
                     <td>
                         <button class="btn btn-success" id="update_settings">Update Settings</button>
+                        <span>
+                            <img id="loader_img" class="hide" src='{{ url_for('static', filename='img/ajax-loader.gif') }}' />
+                            <img id="check_mark_img" style="height:30px;" class="hide" src='{{ url_for('static', filename='img/checkmark.png') }}' />
+                        </span>
                     </td>
                 </tr>
             </table>

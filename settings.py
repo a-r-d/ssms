@@ -5,6 +5,7 @@ LOCAL_DEBUG = False
 
 SECRET_KEY = 'ifjdsfJKLFDJKLFHDSKutgh98wrg983103j24hrtj' #change this when you deploy!
 
+## the default passwords are really just temporary in case the DB is not in use
 DEFAULT_USER_PASS = "password"          # if set in DB, it is overriden
 DEFAULT_ADMIN_PASS = "password"         # ditto to the above
 OVERRIDE_PASSWORD = "incaseyouforget"   #in case you forget the password set in the DB. 

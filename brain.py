@@ -40,6 +40,10 @@ from backend.helpers import file_search
 from backend.helpers import file_search_html
 from backend.helpers import clean_folder
 
+from backend.entities import openDB
+from backend.entities import getSession
+from backend.entities import UserPrefs, Playlist, PlaylistItem
+
 ###########################################################
 # get the dir name to be relative to.
 BASE_DIR = DEFAULT_BASE_DIR
@@ -59,9 +63,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ###########################################################
 ### DB Layer, and request before + after.
+# before, we go and 
 @app.before_request
 def before_request():
-    g.db = get_db()
+    g.db = get_session()
     #print "req path: " + request.path
     if request.path.startswith("/static") == False and request.path.startswith("/login") == False:
         #print "Non static path:"
@@ -71,25 +76,27 @@ def before_request():
         else:
             return render_template('login_user.html',  message="Please Log In!")
     
+#close session after request.
 @app.teardown_request
 def teardown_request(exception):
     db = getattr(g, '_main_db', None)
     if db is not None:
-        db.close()
+        db.commit() #close the session.
         
-def get_db():
+def get_db_session():
     db = getattr(g, '_main_db', None)
     if db is None:
-        db = g._database = connect_to_db()
+        db = g._database = get_session()
     return db
     
-def connect_to_db():
-    conn = sqlite3.connect(DATABASE)
-    return conn
+#get session on every request.
+def get_session():
+    return getSession( DATABASE )
 
+# sets up the DB on first run.
 def init_db():
     with app.app_context():
-        db = get_db()
+        db = sqlite3.connect(DATABASE)
         with app.open_resource(DB_SCHEMA, mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
@@ -147,11 +154,23 @@ def adminConfigPost( message=None ):
         # process the form:
         if "u_pass" in request.form:
             print "updating user pass"
+            entry = g.db.query(UserPrefs).filter_by(key='user_pass').first() 
+            print entry
+            entry.val = request.form["u_pass"]
         if "a_pass" in request.form:
             print "updating admin pass"
+            entry = g.db.query(UserPrefs).filter_by(key='admin_pass').first() 
+            print entry
+            entry.val = request.form["a_pass"]
         if "lib_path" in request.form:
             if os.path.normpath( LIB_DIR ) != os.path.normpath( request.form["lib_path"] ):
                 print "updating lib dir"
+                entry = g.db.query(UserPrefs).filter_by(key='lib_dir').first() 
+                print entry
+                entry.val = request.form["lib_path"]
+
+        # commit after all changes take place
+        g.db.commit()
 
         return "Success"
     else:
@@ -162,15 +181,35 @@ def adminConfigPost( message=None ):
 def adminPanelAuth( message=None ):
     if 'password' in request.form:
         p_admin_test = request.form["password"]
-        if p_admin_test == DEFAULT_ADMIN_PASS or p_admin_test == OVERRIDE_PASSWORD:
-            session["admin_auth_ok"] = True
-            return adminPanel()
+        db_password = None
+        try:
+            entry = g.db.query(UserPrefs).filter_by(key='admin_pass').first() 
+            if entry:
+                db_password = entry.val
+        except Exception, e:
+            log(str(e))
+            print "adminPanelAuth db fail- ", str(e)
+        ## test against the DB first:
+        if db_password != None:
+            if p_admin_test == db_password or p_admin_test == OVERRIDE_PASSWORD:
+                session["admin_auth_ok"] = True
+                return adminPanel()
+            else:
+                session["admin_auth_ok"] = False
+                return render_template(
+                    'login_admin.html', 
+                    message="Password Incorrect!"
+                    )
         else:
-            session["admin_auth_ok"] = False
-            return render_template(
-                'login_admin.html', 
-                message="Password Incorrect!"
-                )
+            if p_admin_test == DEFAULT_ADMIN_PASS or p_admin_test == OVERRIDE_PASSWORD:
+                session["admin_auth_ok"] = True
+                return adminPanel()
+            else:
+                session["admin_auth_ok"] = False
+                return render_template(
+                    'login_admin.html', 
+                    message="Password Incorrect!"
+                    )
     else:
         return render_template(
             'login_admin.html', 
@@ -181,19 +220,40 @@ def adminPanelAuth( message=None ):
 def loginFormUserSubmit( message=None ):
     if request.method=='POST' and request.form["password"] != None:  
         p_word = request.form["password"]
+        db_password = None
+        try:
+            entry = g.db.query(UserPrefs).filter_by(key='user_pass').first() 
+            if entry:
+                db_password = entry.val
+        except Exception, e:
+            log(str(e))
+            print "loginFormUserSubmit db fail- ", str(e)
 
-        ### REWRITE WHEN DB IS WORKING!!
-        if p_word == DEFAULT_USER_PASS or p_word == OVERRIDE_PASSWORD:
-            session['user_auth_ok'] = True
-            print "Authentication success!"
-            return redirect("/", code=302)
+        ## test against the DB first:
+        if db_password != None:
+            if p_word == db_password or p_word == OVERRIDE_PASSWORD:
+                session['user_auth_ok'] = True
+                print "Authentication success!"
+                return redirect("/", code=302)
+            else:
+                session['user_auth_ok'] = False
+                print "Password was incorrect: " + p_word
+                return render_template(
+                    'login_user.html', 
+                    message="Password is Incorrect!"
+                    )
         else:
-            session['user_auth_ok'] = False
-            print "Password was incorrect: " + p_word
-            return render_template(
-                'login_user.html', 
-                message="Password is Incorrect!"
-                )
+            if p_word == DEFAULT_USER_PASS or p_word == OVERRIDE_PASSWORD:
+                session['user_auth_ok'] = True
+                print "Authentication success!"
+                return redirect("/", code=302)
+            else:
+                session['user_auth_ok'] = False
+                print "Password was incorrect: " + p_word
+                return render_template(
+                    'login_user.html', 
+                    message="Password is Incorrect!"
+                    )
     else: 
         return render_template(
             'login_user.html', 
