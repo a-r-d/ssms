@@ -50,7 +50,7 @@
         </div>
     </form>
 </div>
-<div id="extra_menu">
+<span id="home_menu">
     <div class="btn-group">
         <a class="btn btn-small btn-info dropdown-toggle" data-toggle="dropdown" href="#">
             Home folder options
@@ -65,7 +65,31 @@
             </li>
         </ul>
     </div>
-</div>
+</span>
+&nbsp;
+<span id="playlist_menu">
+    <div class="btn-group">
+        <a class="btn btn-small btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+            Playlists
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" id="playlist_area">
+            {% include "playlists_list.html" %}
+        </ul>
+    </div>
+</span>
+&nbsp;
+<span id="bookmark_menu">
+    <div class="btn-group">
+        <a class="btn btn-small btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+            Bookmarks
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" id="bookmark_area">
+            {% include "bookmark_list.html" %}
+        </ul>
+    </div>
+</span>
 <h3>
     Browse:
 </h3>

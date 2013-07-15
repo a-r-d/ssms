@@ -41,9 +41,6 @@
                             <li>
                                 <a href="javascript:void(0);" onClick='downloadFile("{{ file.safePath|replace( "\\", "/") }}")'>Download file</a>
                             </li>
-                            <li>
-                                <a href="#">Mark</a>
-                            </li>
                         </ul>
                     </div>
                 {% else %}
@@ -61,6 +58,9 @@
                             </li>
                             <li>
                                 <a href="javascript:void(0);" onClick='makeNewDir("{{ file.safePath|replace( "\\", "/") }}")'>New Folder Here</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" onClick='createBookmark("{{ file.safePath|replace( "\\", "/") }}")'>Bookmark This</a>
                             </li>
                         </ul>
                     </div>

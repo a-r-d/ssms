@@ -1,0 +1,14 @@
+{% for bm in bookmarks %}
+	<li style="padding-bottom:5px;">
+		<span>
+			&nbsp;
+			<a href="javascript:void(0);" onClick="loadBookmark('{{ bm.path }}')">
+				{{ bm.name }}
+			</a>
+			&nbsp;
+			<a href="javascript:void(0);" class="btn btn-danger" onClick="delBookmark('{{ bm.id }}')">
+				del
+			</a>
+		</span>
+	</li>
+{% endfor %}

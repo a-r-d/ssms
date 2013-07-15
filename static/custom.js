@@ -74,8 +74,6 @@ function reloadSong() {
     document.getElementById("audio_control").load();
 }
 
-
-
 function playFile( play_file ) {
     // a hack:
     //play_file = play_file.replace("*", "'");
@@ -318,6 +316,56 @@ function makeNewDir( src ){
     }
 }
 
+
+function createBookmark( src ) {
+    var b_name =prompt("Please enter a name for the bookmark...","");
+    if (b_name != null && b_name != ""){
+        $.ajax({
+            url: "/bookmark/new",
+            data: {
+                location: src,
+                name: b_name
+            },
+            dataType:"html"
+        }).done( function( res ) {
+            if( res != "fail") {
+                $('#bookmark_area').empty();
+                $('#bookmark_area').append( res );
+            } else {
+                alert("Failure - check logs.")
+            }
+        }).fail( function( res ){
+            console.log("/bookmark/new There was some error: " + res);
+            alert(result);
+        });
+    }
+}
+
+/***
+    Calls load dir on a selected bookmark.
+    Should auto play on result. 
+**/
+function loadBookmark( src ) {
+    loadDir( src );
+}
+
+
+function delBookmark( id ) {
+    $.ajax({
+        url: "/bookmark/del",
+        data: {
+            id: id
+         },
+        dataType:"html",
+    }).done( function( res ) {
+        if( res == "fail") {
+            alert("Failure - check logs.")
+        }
+    }).fail( function( res ){ 
+        console.log("/bookmark/del There was some error: " + res);
+        alert(result);
+    });
+}
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 

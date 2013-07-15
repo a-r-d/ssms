@@ -42,7 +42,7 @@ from backend.helpers import clean_folder
 
 from backend.entities import openDB
 from backend.entities import getSession
-from backend.entities import UserPrefs, Playlist, PlaylistItem
+from backend.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
 
 ###########################################################
 # get the dir name to be relative to.
@@ -117,9 +117,11 @@ if not os.path.exists(DATABASE):
 @app.route('/')
 def home( message=None ):
     listing = list_library(LIB_DIR, DB_DIR)
+    bookmark_list = g.db.query(Bookmark).all()
     return render_template(
         'home.html', 
         listing=listing,
+        bookmarks=bookmark_list,
         message=message
         )
 
@@ -431,7 +433,45 @@ def postUploadFile(message=None):
         traceback.print_exc()
         print str(e)
         return "error: " + str(e)
+
+######### bookmarks ########################################################
+@app.route("/bookmark/new")
+def mkNewBookmark(message=None):
+    if request.method=='GET' and request.args.get("location") != None and request.args.get("name") != None: 
+        loc = request.args.get("location")
+        name = request.args.get("name")
+
+        new_mark = Bookmark(name, loc, 100)
+        g.db.add( new_mark )
         
+        bookmark_list = g.db.query(Bookmark).all()
+        g.db.commit()
+
+        return render_template(
+            'bookmark_list.html', 
+            bookmarks=bookmark_list,
+            message=message
+        )
+    else:
+        return "fail"
+
+@app.route("/bookmark/del")
+def delBookmark(message=None):
+    if request.method=='GET' and request.args.get("id") != None: 
+        id = request.args.get("id")
+
+        entry = g.db.query(Bookmark).filter_by(id=id).first() 
+        g.db.delete( entry )
+        g.db.commit()
+
+        return render_template(
+            'bookmark_list.html', 
+            message=message
+        )
+    else:
+        return "fail"
+
+
 ############################################################################
 # end routes
 ############################################################################

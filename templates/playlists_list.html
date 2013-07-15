@@ -1,0 +1,16 @@
+
+<li>
+    <a href="javascript:void(0);">New Playlist</a>
+</li>
+<li class="divider"></li>
+
+{% for pl in playlist %}
+	<li>
+		<a href="javascript:void(0);">
+			{{ pl.name }}
+		</a>
+		<a href="javascript:void(0);" class="btn btn-danger">
+			del
+		</a>
+	</li>
+{% endfor %}

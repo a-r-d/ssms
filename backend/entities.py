@@ -77,8 +77,7 @@ class Playlist( Base ):
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
 
-	def __init__(self, id, name):
-		self.id = id
+	def __init__(self, name):
 		self.name = name
 
 	def __repr__(self):
@@ -107,14 +106,13 @@ class PlaylistItem( Base ):
 	path = Column(String)
 	list_order = Column(Integer)
 
-	def __init__(self, id, playlist_id, path, list_order):
-		self.id = id
+	def __init__(self, playlist_id, path, list_order):
 		self.playlist_id = playlist_id
 		self.path = path
 		self.list_order = list_order
 
 	def __repr__(self):
-		return "<UserPrefs('%s','%s','%s','%s')>" % (str(self.id), str(self.playlist_id), path, str(list_order))
+		return "<UserPrefs('%s','%s','%s','%s')>" % (str(self.id), str(self.playlist_id), self.path, str(self.list_order))
 
 
 def testPlaylistItem():
@@ -125,6 +123,40 @@ def testPlaylistItem():
 
 	#show prefs:
 	res = this_session.query(PlaylistItem).order_by(PlaylistItem.id)
+	for rec in res:
+		print rec
+
+	this_session.commit()
+
+
+####################################################################
+
+## bookmark loads and begins to play a given directory.
+class Bookmark( Base ):
+	__tablename__ = "bookmark"
+
+	id = Column(Integer, primary_key=True)
+	name = Column(String)
+	path = Column(String)
+	list_order = Column(Integer)
+
+	def __init__(self, name, path, list_order):
+		self.name = name
+		self.path = path
+		self.list_order = list_order
+
+	def __repr__(self):
+		return "<UserPrefs('%s','%s','%s','%s')>" % (str(self.id), self.name, self.path, str(self.list_order))
+
+
+def testBookmark():
+	print "\nTesting bookmark (Bookmark):\n"
+	Session = sessionmaker()
+	Session.configure(bind=ENGINE)
+	this_session = Session()
+
+	#show prefs:
+	res = this_session.query(Bookmark).order_by(Bookmark.id)
 	for rec in res:
 		print rec
 
@@ -143,3 +175,4 @@ if __name__ == '__main__':
     testUserPrefs()
     testPlaylist()
     testPlaylistItem()
+    testBookmark()
