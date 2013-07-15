@@ -8,3 +8,5 @@
 *.ogg
 *.wma
 *.zip
+!test-bunny.ogg
+!test-beep.mp3
