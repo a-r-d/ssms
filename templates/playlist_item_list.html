@@ -1,0 +1,10 @@
+{% for pl in playlist_items %}
+	<li>
+		<a href="javascript:void(0);">
+			{{ pl.path }}
+		</a>
+		<a href="javascript:void(0);" class="btn btn-danger">
+			del
+		</a>
+	</li>
+{% endfor %}

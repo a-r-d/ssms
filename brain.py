@@ -118,10 +118,12 @@ if not os.path.exists(DATABASE):
 def home( message=None ):
     listing = list_library(LIB_DIR, DB_DIR)
     bookmark_list = g.db.query(Bookmark).all()
+    pl_list = g.db.query(Playlist).all()
     return render_template(
         'home.html', 
         listing=listing,
         bookmarks=bookmark_list,
+        playlists=pl_list,
         message=message
         )
 
@@ -440,13 +442,10 @@ def mkNewBookmark(message=None):
     if request.method=='GET' and request.args.get("location") != None and request.args.get("name") != None: 
         loc = request.args.get("location")
         name = request.args.get("name")
-
         new_mark = Bookmark(name, loc, 100)
         g.db.add( new_mark )
-        
         bookmark_list = g.db.query(Bookmark).all()
         g.db.commit()
-
         return render_template(
             'bookmark_list.html', 
             bookmarks=bookmark_list,
@@ -471,6 +470,71 @@ def delBookmark(message=None):
     else:
         return "fail"
 
+
+######################### playlist #############################################
+@app.route("/playlist/new")
+def mkPlaylist(message=None):
+    if request.method=='GET' and request.args.get("name") != None: 
+        name = request.args.get("name")
+        new_pl = Playlist(name)
+        g.db.add( new_pl )
+        pl_list = g.db.query(Playlist).all()
+        g.db.commit()
+        return render_template(
+            'playlists_list.html', 
+            playlists=pl_list,
+            message=message
+        )
+    else:
+        return "fail"
+
+@app.route("/playlist/del")
+def delPlaylist(message=None):
+    if request.method=='GET' and request.args.get("id") != None: 
+        id = request.args.get("id")
+
+        entry = g.db.query(Playlist).filter_by(id=id).first() 
+        g.db.delete( entry )
+        g.db.commit()
+
+        return render_template(
+            'playlists_list.html', 
+            message=message
+        )
+    else:
+        return "fail"
+
+@app.route("/playlist/item/add")
+def addPlaylistItem(message=None):
+    if request.method=='GET' and \
+        request.args.get("id") != None and \
+        request.args.get("path") != None and \
+        request.args.get("list_order") != None: 
+
+        id = request.args.get("id")
+        path = request.args.get("path")
+        list_order = request.args.get("list_order")
+
+        new_pl_item = PlaylistItem(id, path, list_order)
+        g.db.add( new_pl_item )
+        g.db.commit()
+
+        return "ok"
+    else:
+        return "fail"
+
+@app.route("/playlist/item/del")
+def delPlaylistItem(message=None):
+    if request.method=='GET' and request.args.get("id") != None: 
+        id = request.args.get("id")
+
+        entry = g.db.query(PlaylistItem).filter_by(id=id).first() 
+        g.db.delete( entry )
+        g.db.commit()
+
+        return "ok"
+    else:
+        return "fail"
 
 ############################################################################
 # end routes
