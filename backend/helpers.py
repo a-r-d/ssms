@@ -48,18 +48,22 @@ def list_library(lib_dir, db_dir, some_path=None):
     if some_path != None:
         # lib dir has no trailing slash, some_path has a trailing slash.
         target_dir = lib_dir + "/" + some_path
-    
     try:
-        for a_file in os.listdir( target_dir ):
-            file_path = os.path.join( target_dir + "/" , a_file )
-            if os.path.basename(file_path) not in skip_list:
-                if os.path.isdir( file_path ):
-                    listing.append( file_path )
-                else:
-                    listing.append( file_path )
+        # if you pass in a unicode string, os.listdir returns unicode results...
+        for a_file in os.listdir( target_dir.decode('utf-8') ):
+            file_path = os.path.join( target_dir + u"/" , a_file )
+            try:
+                if os.path.basename(file_path) not in skip_list:
+                    if os.path.isdir( file_path ):
+                        listing.append( file_path )
+                    else:
+                        listing.append( file_path )
+            except Exception, e:
+                print "list_library inner loop: ", str(e)
+                continue
     except Exception, e:
-        print str(e)
-        log( str(e) )
+        print "list_library: ", str(e)
+        log( "list_library: " + str(e) )
     
     ##print listing
     listing.sort()
@@ -74,10 +78,11 @@ Searches for a file by matching name:
 """
 def file_search(LIB_DIR, search_string):
     matches = []
-    for root, dirs, files in os.walk(LIB_DIR):
+    # if you pass in a unicode string, os.walk returns unicode results...
+    for root, dirs, files in os.walk( LIB_DIR.decode('utf-8') ):
         for file in files:
             try:
-                if file.encode('utf8').lower().find( search_string.encode('utf8').lower() ) != -1:
+                if file.lower().find( search_string.lower() ) != -1:
                     matches.append( os.path.join( root, file))
             except Exception, e:
                 print "Error on search: ", str(e)
