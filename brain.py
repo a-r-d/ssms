@@ -343,22 +343,32 @@ def getDirDownload( message=None ):
 
 @app.route('/search/json')
 def search( message=None ):
-    res = []
-    if request.method=='GET' and request.args.get("q") != None: 
-        res = file_search_html(LIB_DIR, request.args.get("q"))
-    return json.dumps({"files": res})
+    try:
+        res = []
+        if request.method=='GET' and request.args.get("q") != None: 
+            res = file_search_html(LIB_DIR, request.args.get("q"))
+        return json.dumps({"files": res})
+    except Exception, e:
+        print str(e)
+        log( str(e) )
+        return str(e)
 
 
 @app.route('/search')
 def searchHTML( message=None ):
-    res = []
-    if request.method=='GET' and request.args.get("q") != None: 
-        res = file_search_html(LIB_DIR, request.args.get("q"))
-    return render_template(
-        'file_table.html', 
-        listing=res,
-        message=message
-        )
+    try:
+        res = []
+        if request.method=='GET' and request.args.get("q") != None: 
+            res = file_search_html(LIB_DIR, request.args.get("q"))
+        return render_template(
+            'file_table.html', 
+            listing=res,
+            message=message
+            )
+    except Exception, e:
+        print str(e)
+        log( str(e) )
+        return str(e)
     
 @app.route('/randomfile')
 def getRandomFile(message=None ):
