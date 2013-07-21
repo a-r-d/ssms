@@ -373,7 +373,7 @@ function delBookmark( id ) {
 //////////////////       plylist     //////////////////////////////
 
 function newPlaylist() {
-    var b_name =prompt("New Playlist Name...","");
+    var b_name = prompt("New Playlist Name...","");
     if (b_name != null && b_name != ""){
         $.ajax({
             url: "/playlist/new",
@@ -401,13 +401,107 @@ function playPlaylist(id) {
 function delPlaylist(id){
 
 }
+function delPlaylistItem(id, playlist_id) {
+    $.ajax({
+        url: "/playlist/item/del",
+        data: {
+            id: id,
+            playlist_id: playlist_id
+        },
+        dataType:"html"
+    }).done( function( result ) {
+        if( result != "fail") {
+            $('#edit_playlist_body').empty();
+            $('#edit_playlist_body').append( result );
+        } else {
+            alert("Failure - check logs.")
+        }
+    }).fail( function( result ){
+        console.log("/playlist/item/del There was some error: " + result);
+        alert(result);
+    });
+}
 function editPlaylist(id){
+    $.ajax({
+        url: "/playlist/edit/" + id,
+        dataType:"html"
+    }).done( function( result ) {
+        if( result != "fail") {
+            $('#edit_playlist_body').empty();
+            $('#edit_playlist_body').append( result );
+        } else {
+            alert("Failure - check logs.")
+        }
+    }).fail( function( result ){
+        console.log("/playlist/menu There was some error: " + result);
+        alert(result);
+    });
+
     $('#playlist_editor_modal').modal('show');
 }
 function addToPlaylist( src ){
+
+    $.ajax({
+        url: "/playlist/menu",
+        data: {
+            id: src
+        },
+        dataType:"html"
+    }).done( function( res ) {
+        if( res != "fail") {
+            $('#list_playlist_body').empty();
+            $('#list_playlist_body').append( res );
+        } else {
+            alert("Failure - check logs.")
+        }
+    }).fail( function( res ){
+        console.log("/playlist/menu There was some error: " + res);
+        alert(result);
+    });
+
     $('#playlist_picker_modal').modal('show');
+    $('#target-song').empty().append(src);
 }
 
+function addToPlaylistConfirm() {
+    var src = $('#target-song').text();
+    var id_list = [];
+    // get all checked.
+    $(".playist_checkbox").each( function( index ) {
+        var checkbox = $(this);
+        if( checkbox.prop('checked') || checkbox.prop('checked') == "checked" ){
+            var id = checkbox.attr('id').split("_")[1];
+            id_list.push( id );
+        }
+    });
+
+    if(id_list.length > 0) {
+        $('#loader_img_picker').show();
+    }
+
+    for( var i = 0; i < id_list.length; i++ ) {
+        $.ajax({
+            url: "/playlist/item/add",
+            data: {
+                id: id_list[i],
+                path: src,
+                list_order: 100
+            },
+            dataType:"html"
+        }).done( function( res ) {
+            if( res != "fail") {
+                console.log( res );
+            } else {
+                alert("Failure - check logs.")
+            }
+            $('#loader_img_picker').hide();
+        }).fail( function( res ){
+            console.log("/playlist/item/add There was some error: " + res);
+            alert(result);
+            $('#loader_img_picker').hide();
+        });
+    }
+}
 
 ////////////////////////////////////////////////////////////////////
 function showAdmin(){

@@ -1,0 +1,11 @@
+{% for pl in playlists %}
+	<li>
+		<span>
+			<input type="checkbox" class="playist_checkbox" id="playlist-checkbox_{{ pl.id }}"/>
+			&nbsp; | &nbsp;
+			<a href="javascript:void(0);" onClick="playPlaylist({{ pl.id }})">
+				{{ pl.name }}
+			</a>
+		</span>
+	</li>
+{% endfor %}

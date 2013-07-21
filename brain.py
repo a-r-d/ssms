@@ -516,6 +516,15 @@ def delPlaylist(message=None):
     else:
         return "fail"
 
+@app.route("/playlist/menu")
+def getPlaylistAddMenu(message=None):
+    playlist = g.db.query(Playlist).all()
+    return render_template(
+        'playlists_selection.html', 
+        playlists=playlist,
+        message=message
+    )
+
 @app.route("/playlist/item/add")
 def addPlaylistItem(message=None):
     if request.method=='GET' and \
@@ -537,23 +546,33 @@ def addPlaylistItem(message=None):
 
 @app.route("/playlist/item/del")
 def delPlaylistItem(message=None):
-    if request.method=='GET' and request.args.get("id") != None: 
+    if request.method=='GET' and request.args.get("id") != None and request.args.get("playlist_id") != None: 
         id = request.args.get("id")
-
+        playlist_id = request.args.get("id")
         entry = g.db.query(PlaylistItem).filter_by(id=id).first() 
         g.db.delete( entry )
         g.db.commit()
-
-        return "ok"
+        # get the new list
+        playlist = g.db.query(Playlist).filter_by(id=playlist_id).first() 
+        playlist_items = g.db.query(PlaylistItem).filter_by(playlist_id=playlist.id)
+        return render_template(
+            "playlist_item_list.html",
+            playlist = playlist,
+            playlist_items = playlist_items, 
+            message=message
+        )
     else:
         return "fail"
 
 # pass playlist ID to edit.
 @app.route("/playlist/edit/<id>")
 def editPlaylistByID(id, message=None):
-    playlist = g.db.query(Bookmark).filter_by(id=id).first() 
+    playlist = g.db.query(Playlist).filter_by(id=id).first() 
+    if playlist == None:
+        return "Empty"
     playlist_items = g.db.query(PlaylistItem).filter_by(playlist_id=playlist.id)
     return render_template(
+            "playlist_item_list.html",
             playlist = playlist,
             playlist_items = playlist_items, 
             message=message
