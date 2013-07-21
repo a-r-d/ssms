@@ -7,7 +7,7 @@
 var playing_song_name = "";
 var playing_song_path = "";
 var playing_song_dir = "";
-var current_browsed_dir = "";
+var current_browsed_dir = "/";
 var dir_file_listing = [];
 var player_context = ""; // ['browser', 'search', 'random', 'playlist']
 
@@ -199,6 +199,10 @@ function doSearch() {
     });
 }
 
+function reloadDir() {
+    loadDir( current_browsed_dir );
+}
+
 function loadDir( directory_name ) {    
     console.log("loading: " + directory_name );
     
@@ -310,6 +314,32 @@ function makeNewDir( src ){
             },
             error: function(result) {
                 console.log("/newdir There was some error: " + result);
+                alert(result);
+            }
+        });
+    }
+}
+function deleteTheFile( src ) {
+
+    var yes_ok = confirm("Are you sure?");
+
+    if (yes_ok){
+        $.ajax({
+            url: "/file/delete",
+            data: {
+                name: src
+            },
+            dataType:"html",
+            success: function(result) {
+                if( result == "ok" ) {
+                    // reload dir
+                    reloadDir();
+                } else {
+                    alert( result );
+                }
+            },
+            error: function(result) {
+                console.log("/files/delete There was some error: " + result);
                 alert(result);
             }
         });

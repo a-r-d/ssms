@@ -53,7 +53,7 @@ def list_library(lib_dir, db_dir, some_path=None):
         for a_file in os.listdir( target_dir.decode('utf-8') ):
             file_path = os.path.join( target_dir + u"/" , a_file )
             try:
-                if os.path.basename(file_path) not in skip_list:
+                if os.path.basename(file_path) not in skip_list and ( test_ext( file_path ) or os.path.isdir( file_path )):
                     if os.path.isdir( file_path ):
                         listing.append( file_path )
                     else:
@@ -75,15 +75,21 @@ def list_library(lib_dir, db_dir, some_path=None):
 
 """
 Searches for a file by matching name:
+    #mode must be either "full_path" or "name"
 """
-def file_search(LIB_DIR, search_string):
+def file_search(LIB_DIR, search_string, mode="full_path"):
     matches = []
     # if you pass in a unicode string, os.walk returns unicode results...
     for root, dirs, files in os.walk( LIB_DIR.decode('utf-8') ):
         for file in files:
             try:
-                if file.lower().find( search_string.lower() ) != -1:
-                    matches.append( os.path.join( root, file))
+                if mode == "full_path":
+                    to_search = pathMinusLibrary(LIB_DIR, os.path.normpath(os.path.join( root, file )))
+                    if to_search.lower().find( search_string.lower() ) != -1 and test_ext( file ):
+                        matches.append( os.path.join( root, file))
+                else:
+                    if file.lower().find( search_string.lower() ) != -1 and test_ext( file ):
+                        matches.append( os.path.join( root, file))
             except Exception, e:
                 print "Error on search: ", str(e)
                 continue
@@ -130,7 +136,7 @@ def find_rand_file(LIB_DIR):
     return the_file
 
 def test_ext( filename ):
-    filter = [".mp3", ".m4a", '.ogg']
+    filter = [".mp3", ".m4a", ".mp4", '.ogg']
     for ext in filter:
         if filename.lower().find( ext.lower() ) != -1:
             return True
@@ -151,7 +157,7 @@ def pathMinusLibrary( lib_dir, path_dir):
     return after_lib_only
     
 def isValidExtension( extension ):
-    valid = [".mp3", ".mp4", ".ogg"]
+    valid = [".mp3", ".mp4", ".ogg", ".m4a"]
     if extension in valid:
         return True
     return False

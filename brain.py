@@ -292,6 +292,18 @@ def getFileDownload(message=None ):
         return send_file(the_path, mimetype="audio/mpeg", as_attachment=True)
     else:
         return "Error"
+
+@app.route('/file/delete')
+def deleteFile(message=None ):
+    if request.method=='GET' and request.args.get("name") != None:  
+        the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("name")) )
+        if os.path.isdir( the_path ):
+            return "Can't delete directory."
+        else:
+            os.unlink( the_path )
+            return "ok"
+    else:
+        return "Error"
     
 @app.route('/dir')
 def getDirHTML( message=None ):
@@ -349,9 +361,10 @@ def search( message=None ):
             res = file_search_html(LIB_DIR, request.args.get("q"))
         return json.dumps({"files": res})
     except Exception, e:
-        print str(e)
-        log( str(e) )
-        return str(e)
+        traceback.print_exc()
+        print "search error: ", str(e)
+        log("search error: " + str(e) )
+        return "search error: " + str(e)
 
 
 @app.route('/search')
@@ -366,9 +379,10 @@ def searchHTML( message=None ):
             message=message
             )
     except Exception, e:
-        print str(e)
-        log( str(e) )
-        return str(e)
+        traceback.print_exc()
+        print "search error: ", str(e)
+        log("search error: " + str(e) )
+        return "search error: " + str(e)
     
 @app.route('/randomfile')
 def getRandomFile(message=None ):
@@ -602,6 +616,9 @@ if __name__ == '__main__':
     print "starting in: " + BASE_DIR
     if socket.gethostname() == "waffles":
         LOCAL_DEBUG = True
-        app.run(debug=True, host='0.0.0.0')
+        app.run(debug=True, host='0.0.0.0', port=8888)
+    elif socket.gethostname() == "web335.webfaction.com":
+        LOCAL_DEBUG = True
+        app.run(debug=True, host='0.0.0.0', port=17944)
     else:
         app.run(host='0.0.0.0')

@@ -41,6 +41,11 @@
                             <li>
                                 <a href="javascript:void(0);" onClick='downloadFile("{{ file.safePath|replace( "\\", "/") }}")'>Download file</a>
                             </li>
+                            {% if session.admin_auth_ok %}
+                                <li>
+                                    <a href="javascript:void(0);" onClick='deleteTheFile("{{ file.safePath|replace( "\\", "/") }}")'>Delete File</a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                 {% else %}
