@@ -67,6 +67,11 @@
                             <li>
                                 <a href="javascript:void(0);" onClick='createBookmark("{{ file.safePath|replace( "\\", "/") }}")'>Bookmark This</a>
                             </li>
+                            {% if session.admin_auth_ok %}
+                                <li>
+                                    <a href="javascript:void(0);" onClick='deleteTheDir("{{ file.safePath|replace( "\\", "/") }}")'>Delete Dir</a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                 {% endif %}

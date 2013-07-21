@@ -319,10 +319,9 @@ function makeNewDir( src ){
         });
     }
 }
+
 function deleteTheFile( src ) {
-
     var yes_ok = confirm("Are you sure?");
-
     if (yes_ok){
         $.ajax({
             url: "/file/delete",
@@ -340,6 +339,31 @@ function deleteTheFile( src ) {
             },
             error: function(result) {
                 console.log("/files/delete There was some error: " + result);
+                alert(result);
+            }
+        });
+    }
+}
+
+function deleteTheDir( src ) {
+    var yes_ok = confirm("Are you sure?");
+    if (yes_ok){
+        $.ajax({
+            url: "/dir/delete",
+            data: {
+                name: src
+            },
+            dataType:"html",
+            success: function(result) {
+                if( result == "ok" ) {
+                    // reload dir
+                    reloadDir();
+                } else {
+                    alert( result );
+                }
+            },
+            error: function(result) {
+                console.log("/dir/delete There was some error: " + result);
                 alert(result);
             }
         });

@@ -264,6 +264,12 @@ def loginFormUserSubmit( message=None ):
             message="No Password set!"
             )
 
+@app.route('/logout/admin')
+def logoutAdmin( message=None ):
+    #don't bother with destroying session.
+    session["admin_auth_ok"] = False
+    return redirect("/")
+
 @app.route('/logout')
 def logout( message=None ):
     #don't bother with destroying session.
@@ -272,7 +278,7 @@ def logout( message=None ):
     return render_template(
         'login_user.html', 
         message=message
-        )
+    )
 
 ###
 @app.route('/file') 
@@ -295,6 +301,8 @@ def getFileDownload(message=None ):
 
 @app.route('/file/delete')
 def deleteFile(message=None ):
+    if session.get("admin_auth_ok") == False:
+        return "User not authorized"
     if request.method=='GET' and request.args.get("name") != None:  
         the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("name")) )
         if os.path.isdir( the_path ):
@@ -315,7 +323,21 @@ def getDirHTML( message=None ):
         listing=listing,
         message=message
         )
- 
+
+@app.route('/dir/delete')
+def deleteDir(message=None ):
+    if session.get("admin_auth_ok") == False:
+        return "User not authorized"
+    if request.method=='GET' and request.args.get("name") != None:  
+        the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("name")) )
+        if os.path.isfile( the_path ):
+            return "Slected file was not a directory."
+        else:
+            shutil.rmtree( the_path )
+            return "ok"
+    else:
+        return "Error"
+
 @app.route('/dir/json')
 def getDirJSON( message=None ):
     listing = []
@@ -344,7 +366,6 @@ def getDirDownload( message=None ):
                 the_zip.write(os.path.join(root, file), new_file_name) # (path to copy from, new file name)
 
         the_zip.close()
-
         return send_file(
             zip_path, 
             mimetype="application/octet-stream", 

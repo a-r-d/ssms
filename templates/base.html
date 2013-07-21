@@ -64,6 +64,11 @@
                 <li>
                     <a href='/logout'>logout</a>
                 </li>
+                {% if session.admin_auth_ok %}
+                    <li>
+                        <a href='/logout/admin'>logout admin</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
