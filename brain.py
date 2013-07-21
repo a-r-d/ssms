@@ -15,6 +15,7 @@ from werkzeug import secure_filename
 # built in:
 from datetime import datetime
 import os                   # folder opts
+import sys                  # for sys.version_info
 import socket               # to get hostname
 import shutil               # to copy/del folders.
 import distutils.core       # to copy tree silently
@@ -60,6 +61,9 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 UPLOAD_FOLDER = TEMP_DIR
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# sys.version_info
+log( "Starting app: " + str(sys.version_info))
 
 ###########################################################
 ### DB Layer, and request before + after.
