@@ -472,6 +472,8 @@ def delBookmark(message=None):
 
 
 ######################### playlist #############################################
+
+
 @app.route("/playlist/new")
 def mkPlaylist(message=None):
     if request.method=='GET' and request.args.get("name") != None: 
@@ -535,6 +537,28 @@ def delPlaylistItem(message=None):
         return "ok"
     else:
         return "fail"
+
+# pass playlist ID to edit.
+@app.route("/playlist/edit/<id>")
+def editPlaylistByID(id, message=None):
+    playlist = g.db.query(Bookmark).filter_by(id=id).first() 
+    playlist_items = g.db.query(PlaylistItem).filter_by(playlist_id=playlist.id)
+    return render_template(
+            playlist = playlist,
+            playlist_items = playlist_items, 
+            message=message
+        )
+
+# pass playlist ID to load
+@app.route("/playlist/load/<id>")
+def loadPlaylistByID(id, message=None):
+    playlist = g.db.query(Bookmark).filter_by(id=id).first() 
+    playlist_items = g.db.query(PlaylistItem).filter_by(playlist_id=playlist.id)
+    return render_template(
+            playlist = playlist,
+            playlist_items = playlist_items, 
+            message=message
+        )
 
 ############################################################################
 # end routes

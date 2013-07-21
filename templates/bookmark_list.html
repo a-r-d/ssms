@@ -2,13 +2,14 @@
 	<li style="padding-bottom:5px;">
 		<span>
 			&nbsp;
-			<a href="javascript:void(0);" onClick="loadBookmark('{{ bm.path }}')">
+			<a href="javascript:void(0);" onClick="loadBookmark('{{ bm.path }}')" >
 				{{ bm.name }}
 			</a>
 			&nbsp;
-			<a href="javascript:void(0);" class="btn btn-danger" onClick="delBookmark('{{ bm.id }}')">
+			<a href="javascript:void(0);" class="btn btn-danger" onClick="delBookmark('{{ bm.id }}')" style="float: right;">
 				del
 			</a>
+			<span class="clearfix"></span>
 		</span>
 	</li>
 {% endfor %}

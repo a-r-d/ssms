@@ -36,7 +36,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="#">Add to Playlist</a>
+                                <a href="javascript:void(0);" onClick='addToPlaylist("{{ file.safePath|replace( "\\", "/") }}")'>Add to Playlist</a>
                             </li>
                             <li>
                                 <a href="javascript:void(0);" onClick='downloadFile("{{ file.safePath|replace( "\\", "/") }}")'>Download file</a>

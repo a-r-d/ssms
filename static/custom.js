@@ -316,6 +316,8 @@ function makeNewDir( src ){
     }
 }
 
+///////////////////////////////////////////////////////////////////
+/////////// boomarks                  /////////////////////////////
 
 function createBookmark( src ) {
     var b_name =prompt("Please enter a name for the bookmark...","");
@@ -366,10 +368,48 @@ function delBookmark( id ) {
         alert(result);
     });
 }
+
 ///////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////
+//////////////////       plylist     //////////////////////////////
+
+function newPlaylist() {
+    var b_name =prompt("New Playlist Name...","");
+    if (b_name != null && b_name != ""){
+        $.ajax({
+            url: "/playlist/new",
+            data: {
+                name: b_name
+            },
+            dataType:"html"
+        }).done( function( res ) {
+            if( res != "fail") {
+                $('#playlist_area').empty();
+                $('#playlist_area').append( res );
+            } else {
+                alert("Failure - check logs.")
+            }
+        }).fail( function( res ){
+            console.log("/playlist/new There was some error: " + res);
+            alert(result);
+        });
+    }
+}
+
+function playPlaylist(id) {
+
+}
+function delPlaylist(id){
+
+}
+function editPlaylist(id){
+    $('#playlist_editor_modal').modal('show');
+}
+function addToPlaylist( src ){
+    $('#playlist_picker_modal').modal('show');
+}
 
 
+////////////////////////////////////////////////////////////////////
 function showAdmin(){
     var w = window.open("/admin", "Admin Panel", "width=500,height=700,left=200,top=100");
 }

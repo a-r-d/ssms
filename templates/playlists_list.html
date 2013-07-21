@@ -1,19 +1,25 @@
 
 <li>
-    <a href="javascript:void(0);">New Playlist</a>
+    <a href="javascript:void(0);" onClick="newPlaylist()">New Playlist</a>
 </li>
 <li class="divider"></li>
 
 {% for pl in playlists %}
 	<li>
-		<a href="javascript:void(0);">
-			{{ pl.name }}
-		</a>
-		<a href="javascript:void(0);" class="btn btn-danger">
-			del
-		</a>
-		<a href="javascript:void(0);" class="btn btn-info">
-			edit
-		</a>
+		<span>
+			&nbsp;
+			<a href="javascript:void(0);" onClick="playPlaylist({{ pl.id }})">
+				{{ pl.name }}
+			</a>
+			&nbsp;
+			<a href="javascript:void(0);" onClick="delPlaylist({{ pl.id }})" class="btn btn-danger">
+				del
+			</a>
+			&nbsp;
+			<a href="javascript:void(0);" onClick="editPlaylist({{ pl.id }})" class="btn btn-info">
+				edit
+			</a>
+			<span class="clearfix"></span>
+		</span>
 	</li>
 {% endfor %}
