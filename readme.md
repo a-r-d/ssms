@@ -9,7 +9,6 @@ SSMS is a small music server written in Python. It lets you listen to music righ
 
 
 
-
 ##*Requirements*
 
 + Python 2.6+
@@ -17,14 +16,13 @@ SSMS is a small music server written in Python. It lets you listen to music righ
 + Non-Standard Python Modules:
     1. Flask +(dependencies for templates, ect- just use pip)
     2. Tornado
+    3. sqlalchemy
 
 + Cron- install a cron job to restart the server in case of crashing. 
     do something like: "20 * * * * /path/to/run.sh"
 
 + A bunch of music files! Put them wherever you point LIB_DIR to, by default it is
     [project_path]/library
-
-+ pyhton sqlite3 module. 
 
 
 
@@ -35,7 +33,8 @@ SSMS is a small music server written in Python. It lets you listen to music righ
 
 + Drop the files in the repo somehere on your server
 
-+ do ./run.sh to start the server.
++ start it running:  
+    ./run.sh > outputs.out &
 
 + set a different port if you like in server.py (default is 8888)
 
@@ -45,6 +44,7 @@ SSMS is a small music server written in Python. It lets you listen to music righ
     'library' dir from the base of the app. 
 
 + Save the admin settings and refresh the page. 
++
 
 
 
