@@ -60,8 +60,8 @@ $(document).ready( function(){
 // Click events:
 ///////////////////////////////////////////////////////
 
-function updatePlayer(){
-    $("#nowplaying").empty().append( playing_song_name ); 
+function updatePlayer( play_file_path ){
+    $("#nowplaying").empty().append( play_file_path ); //playing_song_name ); 
 }
 
 function playSong() {
@@ -89,7 +89,7 @@ function playFile( play_file ) {
         playing_song_name = name;
         playing_song_path = play_file;
         
-        updatePlayer();
+        updatePlayer( play_file );
     } catch ( e ) {
         alert( e );
     }
@@ -114,6 +114,11 @@ function nextSong() {
         arr_to_iter = playlist_file_array;
     }
     */
+    if( player_context == CONTEXT_RANDOM) {
+        getRandom();
+        return;
+    }
+
     console.log("Playing next song");
     if( arr_to_iter.length < 2 ) {
         return;
@@ -161,6 +166,17 @@ function prevSong() {
 function songEnded() {
     console.log("song ended");
     nextSong();
+}
+
+function toggleRandom(){
+    if( player_context == CONTEXT_RANDOM ) {
+        player_context = "";
+        $("#btn_random_toggle").removeClass("btn-success");
+    } else {
+        player_context = CONTEXT_RANDOM;
+        getRandom();
+        $("#btn_random_toggle").addClass("btn-success");
+    }
 }
 
 function getRandom() {

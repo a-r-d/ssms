@@ -81,7 +81,7 @@ Searches for a file by matching name:
 def file_search(LIB_DIR, search_string, mode="full_path"):
     matches = []
     # if you pass in a unicode string, os.walk returns unicode results...
-    for root, dirs, files in os.walk( LIB_DIR.decode('utf-8') ):
+    for root, dirs, files in os.walk( LIB_DIR ): ## tried LIB_DIR.decode('utf-8') , didnt work on server.
         for file in files:
             try:
                 if mode == "full_path":

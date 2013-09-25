@@ -34,15 +34,13 @@
     <div id="controls">
 
     </div>
-    <button onClick='prevSong()'>prev</button>
-    <button onClick='nextSong()'>next</button>
-    <button onClick='getRandom()'>random</button>
-    <button onClick='downloadNowPlaying()'>download playing</button>
+    <button onClick='prevSong()' class="btn">prev</button>
+    <button onClick='nextSong()' class="btn">next</button>
+    <button onClick='toggleRandom()'  class="btn" id="btn_random_toggle">random</button>
+    <button onClick='downloadNowPlaying()'  class="btn">download playing</button>
     <br />
     Playing:
-    <span id="nowplaying">
-        
-    </span>
+    <b><span id="nowplaying"></span></b>
 </div>
 <div>
     <form id="query_form">
