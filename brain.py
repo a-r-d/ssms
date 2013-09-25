@@ -387,8 +387,7 @@ def search( message=None ):
         return json.dumps({"files": res})
     except Exception, e:
         traceback.print_exc()
-        print "search error: ", str(e)
-        log("search error: " + str(e) )
+        log("search error (json): " + str(e) )
         return "search error: " + str(e)
 
 
@@ -405,7 +404,6 @@ def searchHTML( message=None ):
             )
     except Exception, e:
         traceback.print_exc()
-        print "search error: ", str(e)
         log("search error: " + str(e) )
         return "search error: " + str(e)
     

@@ -15,6 +15,7 @@ def log( some_string ):
         f = open(LOG_DIR + "/out.log", 'a')
         f.write( str( dt ) + ": " + some_string + "\n" )
         f.close()
+        print some_string
     except Exception, e:
         traceback.print_exc()
         print str(e)
@@ -91,7 +92,7 @@ def file_search(LIB_DIR, search_string, mode="full_path"):
                     if file.lower().find( search_string.lower() ) != -1 and test_ext( file ):
                         matches.append( os.path.join( root, file))
             except Exception, e:
-                print "Error on search: ", str(e)
+                log("Error on search: " + str(e) + " for file:" + file)
                 continue
     #sort it:
     matches.sort()
