@@ -15,6 +15,14 @@ var CONTEXT_RANDOM = "random";
 var CONTEXT_SEARCH = "search";
 var CONTEXT_BROWSER = "browser";
 var CONTEXT_PLAYLIST = "playlist";
+
+function utf8_to_b64( str ) {
+  return window.btoa(unescape(encodeURIComponent( str )));
+}
+
+function b64_to_utf8( str ) {
+  return decodeURIComponent(escape(window.atob( str )));
+}
  
 $(document).ready( function(){
 
@@ -78,7 +86,10 @@ function playFile( play_file ) {
     // a hack:
     //play_file = play_file.replace("*", "'");
     console.log("Playing file: " + play_file);
-    $("#song_src").attr("src", "/file?q=" + play_file); //play_file has a prefixed slash
+    var req_name = encodeURIComponent(play_file);
+    $("#song_src").attr("src", "/file?q=" + req_name); //play_file has a prefixed slash
+    $("#song_src").data('songpath', play_file);
+
     try {
         document.getElementById("audio_control").load();
         document.getElementById("audio_control").play();
@@ -119,19 +130,22 @@ function nextSong() {
         return;
     }
 
-    console.log("Playing next song");
     if( arr_to_iter.length < 2 ) {
         return;
     }
-    var currFile = $("#song_src").attr("src");
+    console.log("Playing next song");
+
+    var currFile = $("#song_src").data('songpath');
     for( var i = 0; i < arr_to_iter.length; i++) {
         if( currFile.indexOf( arr_to_iter[i].safePath ) != -1 ) {
             if(arr_to_iter.length - 1 > i ) {
                 // play next
-                 playFile( arr_to_iter[i + 1].safePath )
+                playFile( arr_to_iter[i + 1].safePath );
+                break;
             } else {
                 // play first
-                playFile( arr_to_iter[0].safePath )
+                playFile( arr_to_iter[0].safePath );
+                break;
             }
         }
     }
@@ -145,19 +159,22 @@ function prevSong() {
     } else if( player_context == 'playlist') {
         arr_to_iter = playlist_file_array;
     }*/
-    console.log("Playing previous song");
+    
     if( arr_to_iter.length < 2 ) {
         return;
     }
-    var currFile = $("#song_src").attr("src");
+    console.log("Playing previous song");
+    var currFile = $("#song_src").data('songpath');
     for( var i = 0; i < arr_to_iter.length; i++) {
         if( currFile.indexOf( arr_to_iter[i].safePath ) != -1 ) {
             if(i != 0) {
                 // play next
-                 playFile( arr_to_iter[i - 1].safePath )
+                 playFile( arr_to_iter[i - 1].safePath );
+                 break;
             } else {
                 // play first
-                 playFile( arr_to_iter[0].safePath )
+                 playFile( arr_to_iter[0].safePath );
+                 break;
             }
         }
     }
@@ -222,10 +239,18 @@ function reloadDir() {
 function loadDir( directory_name ) {    
     console.log("loading: " + directory_name );
     
+    //var req_name = utf8_to_b64(directory_name);
+    var req_name = encodeURIComponent(directory_name);
+    console.log("Encoded: ", req_name);
+
     // Get the HTML from the template
     $.ajax({
-        url: "/dir?q=" + directory_name,
+        url: "/dir",
         dataType:"html",
+        type: 'POST',
+        data: {
+            q: req_name
+        },
         success: function(result) {
            $("#file_browser_table").empty().append(result);
            current_browsed_dir = directory_name;
@@ -239,8 +264,12 @@ function loadDir( directory_name ) {
     
     // get the JSON 
     $.ajax({
-        url: "/dir/json?q=" + directory_name,
+        url: "/dir/json",
         dataType:"json",
+        type: 'POST',
+        data: {
+            q: req_name
+        },
         success: function(result) {
            console.log( result );
            dir_file_listing = result;

@@ -288,8 +288,8 @@ def logout( message=None ):
 @app.route('/file') 
 def getFile(message=None ):
     # filename is the absolute path: 
-    if request.method=='GET' and request.args.get("q") != None:  
-        path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("q")) )
+    if request.args.get("q") != None:  
+        path = os.path.normpath( LIB_DIR + urllib2.unquote(request.args.get("q")))
         #print "Serving file: ", path
         return send_file(path, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
     else:
@@ -297,7 +297,7 @@ def getFile(message=None ):
 
 @app.route('/file/download')
 def getFileDownload(message=None ):
-    if request.method=='GET' and request.args.get("q") != None:  
+    if request.args.get("q") != None:  
         the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("q")) )
         return send_file(the_path, mimetype="audio/mpeg", as_attachment=True)
     else:
@@ -307,7 +307,7 @@ def getFileDownload(message=None ):
 def deleteFile(message=None ):
     if session.get("admin_auth_ok") == False:
         return "User not authorized"
-    if request.method=='GET' and request.args.get("name") != None:  
+    if request.args.get("name") != None:  
         the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("name")) )
         if os.path.isdir( the_path ):
             return "Can't delete directory."
@@ -317,18 +317,18 @@ def deleteFile(message=None ):
     else:
         return "Error"
     
-@app.route('/dir')
+@app.route('/dir', methods=['POST'])
 def getDirHTML( message=None ):
     listing = []
-    if request.method=='GET' and request.args.get("q") != None: 
-        listing = list_library(LIB_DIR, DB_DIR, request.args.get("q"))
+    if request.form["q"] != None: 
+        listing = list_library(LIB_DIR, DB_DIR, urllib2.unquote(request.form["q"]))
     return render_template(
         'file_table.html', 
         listing=listing,
         message=message
-        )
+    )
 
-@app.route('/dir/delete')
+@app.route('/dir/delete', methods=['POST'])
 def deleteDir(message=None ):
     if session.get("admin_auth_ok") == False:
         return "User not authorized"
@@ -342,11 +342,11 @@ def deleteDir(message=None ):
     else:
         return "Error"
 
-@app.route('/dir/json')
+@app.route('/dir/json', methods=['POST'])
 def getDirJSON( message=None ):
     listing = []
-    if request.method=='GET' and request.args.get("q") != None: 
-        listing = list_library(LIB_DIR, DB_DIR, request.args.get("q"))
+    if request.form["q"] != None: 
+        listing = list_library(LIB_DIR, DB_DIR, urllib2.unquote(request.form["q"]))
     return json.dumps( listing )
 
 @app.route('/dir/download')
@@ -354,7 +354,7 @@ def getDirDownload( message=None ):
     print "Serving folder"
     the_zip = None
     if request.method=='GET' and request.args.get("q") != None: 
-        path = os.path.normpath( LIB_DIR + "/" + request.args.get("q"))
+        path = os.path.normpath( LIB_DIR + "/" + urllib2.unquote(request.args.get("q")))
         print "Dir path: ", path
         #open zip file
         clean_folder( TEMP_DIR )
@@ -396,7 +396,7 @@ def searchHTML( message=None ):
     try:
         res = []
         if request.method=='GET' and request.args.get("q") != None: 
-            res = file_search_html(LIB_DIR, request.args.get("q"))
+            res = file_search_html(LIB_DIR, urllib2.unquote(request.args.get("q")))
         return render_template(
             'file_table.html', 
             listing=res,

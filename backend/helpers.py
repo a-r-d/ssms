@@ -50,6 +50,7 @@ def list_library(lib_dir, db_dir, some_path=None):
         # lib dir has no trailing slash, some_path has a trailing slash.
         target_dir = lib_dir + "/" + some_path
     try:
+        #print 'Listing target_dir:', target_dir
         # if you pass in a unicode string, os.listdir returns unicode results...
         for a_file in os.listdir( target_dir.decode('utf-8') ):
             file_path = os.path.join( target_dir + u"/" , a_file )
