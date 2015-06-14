@@ -51,46 +51,8 @@ app.config['UPLOAD_FOLDER'] = CONFIG_MAP['TEMP_DIR']
 
 # sys.version_info
 log("Starting app: " + str(sys.version_info))
+log("Application database location: " + CONFIG_MAP['DATABASE'])
 
-###########################################################
-### DB Layer, and request before + after.
-# before, we go and 
-@app.before_request
-def before_request():
-    g.db = get_session()
-    #print "req path: " + request.path
-    if request.path.startswith("/static") == False and request.path.startswith("/login") == False:
-        #print "Non static path:"
-        if 'user_auth_ok' in session:
-            if session['user_auth_ok'] != True:
-                return render_template('login_user.html', message="Please Log In!")
-        else:
-            return render_template('login_user.html',  message="Please Log In!")
-    
-#close session after request.
-@app.teardown_request
-def teardown_request(exception):
-    db = getattr(g, '_main_db', None)
-    if db is not None:
-        db.commit() #close the session.
-        
-def get_db_session():
-    db = getattr(g, '_main_db', None)
-    if db is None:
-        db = g._database = get_session()
-    return db
-    
-#get session on every request.
-def get_session():
-    return getSession(CONFIG_MAP['DATABASE'])
-
-# sets up the DB on first run.
-def init_db():
-    with app.app_context():
-        db = sqlite3.connect(CONFIG_MAP['DATABASE'])
-        with app.open_resource(CONFIG_MAP['DB_SCHEMA'], mode='r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
 
 ## First run setup:
 ## make temp dirs, logs, ect - all on 'ignore' in the repo..:
@@ -105,33 +67,11 @@ if not os.path.exists(CONFIG_MAP['DATABASE']):
 
 
 ##########################################################
-### Routes
+### Routes & middlware
 ###########################################################
-@app.route('/')
-def home( message=None ):
-    listing = list_library(CONFIG_MAP['LIB_DIR'], CONFIG_MAP['DB_DIR'])
-    bookmark_list = g.db.query(Bookmark).all()
-    pl_list = g.db.query(Playlist).all()
-    return render_template(
-        'home.html', 
-        listing=listing,
-        bookmarks=bookmark_list,
-        playlists=pl_list,
-        message=message
-    )
-
-#######################
-### Other routes
-#######################
-import routes.auth
+import middleware
+import routes.index
+import routes.auth 
 import routes.file
-import routes.search 
-import routes.playlist 
-import routes.upload 
-import routes.bookmark 
-
 
 #############################################################
-if __name__ == '__main__':
-    print "starting in: " + CONFIG_MAP['BASE_DIR']
-    app.run(debug=CONFIG_MAP['LOCAL_DEBUG'], host=CONFIG_MAP['HOST'], port=CONFIG_MAP['PORT'])

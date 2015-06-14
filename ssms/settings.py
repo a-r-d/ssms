@@ -10,7 +10,7 @@ def configure():
     DEFAULT_BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
     DEFAULT_LIBRARY_LOCATION = DEFAULT_BASE_DIR + "/library" # supply an absolute path for this.
-    DEFAULT_LIBRARY_LOCATION = "D:/music"
+    #DEFAULT_LIBRARY_LOCATION = "D:/music"
 
     # you should not have to change this, it is mostly settable in the DB.  
     DEFAULT_TEMP_LOCATION = "/temp"         # relative to base dir set above, defaults to app base dir.
@@ -41,6 +41,11 @@ def configure():
         LOCAL_DEBUG = True
         PORT = 17944
 
+    ## the default passwords are really just temporary in case the DB is not in use
+    DEFAULT_USER_PASS = "password"          # if set in DB, it is overriden
+    DEFAULT_ADMIN_PASS = "password"         # ditto to the above
+    OVERRIDE_PASSWORD = "incaseyouforget"   #in case you forget the password set in the DB. 
+
     return {
         'BASE_DIR': BASE_DIR,
         'TEMP_DIR': TEMP_DIR,
@@ -48,10 +53,12 @@ def configure():
         'LOG_DIR': LOG_DIR,
         'LOG_FILE': LOG_FILE,
         'DB_DIR': DB_DIR,
-        'DATABASE': DB_DIR,
+        'DATABASE': DATABASE,
         'DB_SCHEMA': DB_SCHEMA,
         'LOCAL_DEBUG': LOCAL_DEBUG,
         'PORT': PORT,
+        'HOST': HOST,
+        'OVERRIDE_PASSWORD': OVERRIDE_PASSWORD,
         'INIT_DIRS': [
             TEMP_DIR,
             LIB_DIR,
@@ -68,8 +75,5 @@ def configure():
 LOCAL_DEBUG = True
 SECRET_KEY = 'ifjdsfJKLFDJKLFHDSKutgh98wrg983103j24hrtj' #change this when you deploy!
 
-## the default passwords are really just temporary in case the DB is not in use
-DEFAULT_USER_PASS = "password"          # if set in DB, it is overriden
-DEFAULT_ADMIN_PASS = "password"         # ditto to the above
-OVERRIDE_PASSWORD = "incaseyouforget"   #in case you forget the password set in the DB. 
+
 CONFIG_MAP = configure()

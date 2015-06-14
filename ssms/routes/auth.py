@@ -27,6 +27,24 @@ import zipfile              # serve folder for download
 import traceback            # exception on tough stuff
 import sqlite3              # the db
 
+from ssms.settings import SECRET_KEY, CONFIG_MAP
+
+
+# internal junk
+from ssms.lib.helpers import clean_folder
+from ssms.lib.helpers import list_library
+from ssms.lib.helpers import log
+from ssms.lib.helpers import pathMinusLibrary # try to remove this.
+from ssms.lib.helpers import find_rand_file
+from ssms.lib.helpers import file_search
+from ssms.lib.helpers import file_search_html
+from ssms.lib.helpers import clean_folder
+
+from ssms.lib.entities import openDB
+from ssms.lib.entities import getSession
+from ssms.lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
+
+
 
 ###
 ## Login stuff
@@ -45,7 +63,7 @@ def adminPanel( message=None ):
         #check to see if the passwords are set in settings or DB
         return render_template('admin.html', 
             message=message,
-            LIB_PATH= os.path.normpath(LIB_DIR),
+            LIB_PATH= os.path.normpath(CONFIG_MAP['LIB_DIR']),
             user_pass_note="Password set in settings.py file",
             admin_pass_note="Password set in settings.py file",
             )
@@ -96,7 +114,7 @@ def adminPanelAuth( message=None ):
             print "adminPanelAuth db fail- ", str(e)
         ## test against the DB first:
         if db_password != None:
-            if p_admin_test == db_password or p_admin_test == OVERRIDE_PASSWORD:
+            if p_admin_test == db_password or p_admin_test == CONFIG_MAP['OVERRIDE_PASSWORD']:
                 session["admin_auth_ok"] = True
                 return adminPanel()
             else:
@@ -106,7 +124,7 @@ def adminPanelAuth( message=None ):
                     message="Password Incorrect!"
                     )
         else:
-            if p_admin_test == DEFAULT_ADMIN_PASS or p_admin_test == OVERRIDE_PASSWORD:
+            if p_admin_test == DEFAULT_ADMIN_PASS or p_admin_test == CONFIG_MAP['OVERRIDE_PASSWORD']:
                 session["admin_auth_ok"] = True
                 return adminPanel()
             else:
@@ -136,7 +154,7 @@ def loginFormUserSubmit( message=None ):
 
         ## test against the DB first:
         if db_password != None:
-            if p_word == db_password or p_word == OVERRIDE_PASSWORD:
+            if p_word == db_password or p_word == CONFIG_MAP['OVERRIDE_PASSWORD']:
                 session['user_auth_ok'] = True
                 print "Authentication success!"
                 return redirect("/", code=302)
@@ -148,7 +166,7 @@ def loginFormUserSubmit( message=None ):
                     message="Password is Incorrect!"
                     )
         else:
-            if p_word == DEFAULT_USER_PASS or p_word == OVERRIDE_PASSWORD:
+            if p_word == DEFAULT_USER_PASS or p_word == CONFIG_MAP['OVERRIDE_PASSWORD']:
                 session['user_auth_ok'] = True
                 print "Authentication success!"
                 return redirect("/", code=302)

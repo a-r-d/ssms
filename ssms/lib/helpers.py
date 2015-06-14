@@ -4,7 +4,7 @@ import shutil
 import random
 from datetime import datetime
 import traceback
-from settings import CONFIG_MAP
+from ssms.settings import CONFIG_MAP
 
 """
 Do some logging:

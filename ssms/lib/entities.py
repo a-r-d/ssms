@@ -21,6 +21,7 @@ def openDB( db_loc ):
 		return engine
 	except Exception, e:
 		print "Exceptiion opening DB cxn: ", str(e)
+		print "Attempted to open DB @:", db_loc
 		log(str(e))
 		return None
 
