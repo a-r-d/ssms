@@ -11,6 +11,8 @@ SSMS is a small music server written in Python. It lets you listen to music righ
 
 ##*Requirements*
 
++ Linux OS (Mac OSX may work, not sure)
+
 + Python 2.6+
 
 + Non-Standard Python Modules:

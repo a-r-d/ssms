@@ -19,7 +19,7 @@ def configure():
     DB_LOCATION =  "/db"                    # relative to base dir set above, defaults to app base dir.
     DB_FILE_NAME = "/main.db"               # relative to base dir set above, defaults to app base dir. 
     SCHEMA_LOCATION = "/db/schema.sql"      # relative to base dir set above, defaults to app base dir.
-
+    ALLOWED_EXTENSIONS = set(['mp3', 'm4a', 'mp3', 'ogg', 'wma', 'mov'])
 
     BASE_DIR = DEFAULT_BASE_DIR
     TEMP_DIR = BASE_DIR + DEFAULT_TEMP_LOCATION
@@ -56,6 +56,7 @@ def configure():
         'DATABASE': DATABASE,
         'DB_SCHEMA': DB_SCHEMA,
         'LOCAL_DEBUG': LOCAL_DEBUG,
+        'ALLOWED_EXTENSIONS': ALLOWED_EXTENSIONS,
         'PORT': PORT,
         'HOST': HOST,
         'OVERRIDE_PASSWORD': OVERRIDE_PASSWORD,
@@ -72,8 +73,5 @@ def configure():
 ### Exposed directly
 #######################################
 
-LOCAL_DEBUG = True
 SECRET_KEY = 'ifjdsfJKLFDJKLFHDSKutgh98wrg983103j24hrtj' #change this when you deploy!
-
-
 CONFIG_MAP = configure()

@@ -51,7 +51,9 @@ from lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
 def before_request():
     g.db = get_session()
     #print "req path: " + request.path
-    if request.path.startswith("/static") == False and request.path.startswith("/login") == False:
+    if request.path.startswith("/static") == False and \
+        request.path.startswith("/bower_components") == False and \
+        request.path.startswith("/login") == False:
         #print "Non static path:"
         if 'user_auth_ok' in session:
             if session['user_auth_ok'] != True:
@@ -76,21 +78,3 @@ def get_db_session():
 def get_session():
     return getSession(CONFIG_MAP['DATABASE'])
 
-# sets up the DB on first run.
-def init_db():
-    with app.app_context():
-        db = sqlite3.connect(CONFIG_MAP['DATABASE'])
-        with app.open_resource(CONFIG_MAP['DB_SCHEMA'], mode='r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
-
-## First run setup:
-## make temp dirs, logs, ect - all on 'ignore' in the repo..:
-for d in CONFIG_MAP['INIT_DIRS']:
-    if not os.path.exists(d):
-        print "Creating location: " + d
-        os.makedirs(d)
-        
-if not os.path.exists(CONFIG_MAP['DATABASE']):
-    print "Creating database at: " + CONFIG_MAP['DATABASE']
-    init_db()

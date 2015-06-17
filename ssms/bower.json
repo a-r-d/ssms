@@ -1,0 +1,24 @@
+{
+  "name": "ssms",
+  "version": "0.0.0",
+  "homepage": "https://github.com/a-r-d/ssms",
+  "authors": [
+    "Aaron Decker <d00ble.ard@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "directory" : "static/components",
+
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.5",
+    "jquery-ui": "~1.11.4",
+    "jquery-file-upload": "~9.10.1"
+  }
+}

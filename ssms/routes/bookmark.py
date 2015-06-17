@@ -1,5 +1,9 @@
 from ssms import app
 
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask import redirect
 from flask import Response
 from flask import send_file
 from flask import session
@@ -23,6 +27,13 @@ import zipfile              # serve folder for download
 import traceback            # exception on tough stuff
 import sqlite3              # the db
 
+from ssms.settings import SECRET_KEY, CONFIG_MAP
+
+from ssms.lib.entities import openDB
+from ssms.lib.entities import getSession
+from ssms.lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
+
+from ssms.lib.log import log
 
 ######### bookmarks ########################################################
 @app.route("/bookmark/new")

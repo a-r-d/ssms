@@ -1,5 +1,9 @@
 from ssms import app
 
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask import redirect
 from flask import Response
 from flask import send_file
 from flask import session
@@ -24,28 +28,26 @@ import traceback            # exception on tough stuff
 import sqlite3              # the db
 
 from ssms.settings import SECRET_KEY, CONFIG_MAP
-
-# internal junk
-from ssms.lib.helpers import clean_folder
-from ssms.lib.helpers import list_library
-from ssms.lib.helpers import log
-from ssms.lib.helpers import pathMinusLibrary # try to remove this.
-from ssms.lib.helpers import find_rand_file
-from ssms.lib.helpers import file_search
-from ssms.lib.helpers import file_search_html
-from ssms.lib.helpers import clean_folder
+from ssms.lib.library_utils import clean_folder
+from ssms.lib.library_utils import list_library
+from ssms.lib.library_utils import pathMinusLibrary # try to remove this.
+from ssms.lib.library_utils import find_rand_file
+from ssms.lib.library_utils import file_search
+from ssms.lib.library_utils import file_search_html
+from ssms.lib.library_utils import clean_folder
 
 from ssms.lib.entities import openDB
 from ssms.lib.entities import getSession
 from ssms.lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
 
+from ssms.lib.log import log
 
 ###
 @app.route('/file') 
 def getFile(message=None ):
     # filename is the absolute path: 
     if request.args.get("q") != None:  
-        path = os.path.normpath( LIB_DIR + urllib2.unquote(request.args.get("q")))
+        path = os.path.normpath( CONFIG_MAP['LIB_DIR'] + urllib2.unquote(request.args.get("q")))
         #print "Serving file: ", path
         return send_file(path, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
     else:
@@ -54,7 +56,7 @@ def getFile(message=None ):
 @app.route('/file/download')
 def getFileDownload(message=None ):
     if request.args.get("q") != None:  
-        the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("q")) )
+        the_path = os.path.normpath( CONFIG_MAP['LIB_DIR'] + urllib2.unquote( request.args.get("q")) )
         return send_file(the_path, mimetype="audio/mpeg", as_attachment=True)
     else:
         return "Error"
@@ -64,7 +66,7 @@ def deleteFile(message=None ):
     if session.get("admin_auth_ok") == False:
         return "User not authorized"
     if request.args.get("name") != None:  
-        the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("name")) )
+        the_path = os.path.normpath( CONFIG_MAP['LIB_DIR'] + urllib2.unquote( request.args.get("name")) )
         if os.path.isdir( the_path ):
             return "Can't delete directory."
         else:
@@ -77,7 +79,7 @@ def deleteFile(message=None ):
 def getDirHTML( message=None ):
     listing = []
     if request.form["q"] != None: 
-        listing = list_library(LIB_DIR, DB_DIR, urllib2.unquote(request.form["q"]))
+        listing = list_library(CONFIG_MAP['LIB_DIR'], CONFIG_MAP['DB_DIR'], urllib2.unquote(request.form["q"]))
     return render_template(
         'file_table.html', 
         listing=listing,
@@ -89,7 +91,7 @@ def deleteDir(message=None ):
     if session.get("admin_auth_ok") == False:
         return "User not authorized"
     if request.method=='GET' and request.args.get("name") != None:  
-        the_path = os.path.normpath( LIB_DIR + urllib2.unquote( request.args.get("name")) )
+        the_path = os.path.normpath(CONFIG_MAP['LIB_DIR'] + urllib2.unquote( request.args.get("name")) )
         if os.path.isfile( the_path ):
             return "Slected file was not a directory."
         else:
@@ -102,7 +104,7 @@ def deleteDir(message=None ):
 def getDirJSON( message=None ):
     listing = []
     if request.form["q"] != None: 
-        listing = list_library(LIB_DIR, DB_DIR, urllib2.unquote(request.form["q"]))
+        listing = list_library(CONFIG_MAP['LIB_DIR'], CONFIG_MAP['DB_DIR'], urllib2.unquote(request.form["q"]))
     return json.dumps( listing )
 
 @app.route('/dir/download')
@@ -110,11 +112,11 @@ def getDirDownload( message=None ):
     print "Serving folder"
     the_zip = None
     if request.method=='GET' and request.args.get("q") != None: 
-        path = os.path.normpath( LIB_DIR + "/" + urllib2.unquote(request.args.get("q")))
+        path = os.path.normpath(CONFIG_MAP['LIB_DIR'] + "/" + urllib2.unquote(request.args.get("q")))
         print "Dir path: ", path
         #open zip file
-        clean_folder( TEMP_DIR )
-        zip_path = TEMP_DIR + "/" + os.path.basename( path ) + ".zip" # create a location/ name for the zip file.
+        clean_folder(CONFIG_MAP['TEMP_DIR'])
+        zip_path = CONFIG_MAP['TEMP_DIR'] + "/" + os.path.basename( path ) + ".zip" # create a location/ name for the zip file.
         print "Zip: ", zip_path
         the_zip = zipfile.ZipFile(zip_path, 'w') #make a zip file of this name
         #for f in os.listdir( path ):
@@ -134,25 +136,23 @@ def getDirDownload( message=None ):
         return "Error"
 
 
-
-    
 @app.route('/randomfile')
 def getRandomFile(message=None ):
     # filename is the absolute path: 
-    the_file = find_rand_file(LIB_DIR)
+    the_file = find_rand_file(CONFIG_MAP['LIB_DIR'])
     return send_file(the_file, mimetype="audio/mpeg", as_attachment=False) ## don't send as attachment, serve directly
 
 @app.route('/random')
 def getRandom(message=None ):
     the_file = find_rand_file(LIB_DIR)
-    file_path = pathMinusLibrary(LIB_DIR, the_file)
+    file_path = pathMinusLibrary(CONFIG_MAP['LIB_DIR'], the_file)
     return file_path
 
 @app.route('/newdir')
 def nakeDir(message=None ):
     try:
         if request.method=='GET' and request.args.get("name") != None and request.args.get("location") != None: 
-            new_dir_path = os.path.normpath( LIB_DIR + "/" + request.args.get("location") + "/" + request.args.get("name"))
+            new_dir_path = os.path.normpath(CONFIG_MAP['LIB_DIR'] + "/" + request.args.get("location") + "/" + request.args.get("name"))
             os.mkdir(new_dir_path)
             return "Success"
         else:
@@ -161,12 +161,3 @@ def nakeDir(message=None ):
         traceback.print_exc()
         print str(e)
         return "Error: " + str(e)
-
-
-############################################################################
-# end routes
-############################################################################
-def allowed_file(filename):
-    ALLOWED_EXTENSIONS = set(['mp3', 'm4a', 'mp3', 'ogg', 'wma', 'mov'])
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

@@ -4,6 +4,95 @@
  *
  *  
  */
+if(!window.console) {
+    window.console = {
+        log: function() {},
+        error: function() {}
+    }
+    alert('Please use chrome, IE blows');
+}
+
+function SSMSPlayer(options) {
+    this.options = options;
+    if(!options.playerId) {
+        throw new Error('No player ID set');
+    }
+    if(!options.songSrcId) {
+        throw new Error('No song source ID set');
+    }
+
+    this.playing_song_name = null;
+    this.playing_song_path = null;
+    this.context = null;
+}
+
+SSMSPlayer.prototype.updatePlayer = function(filePath){
+    $(this.options.songSrcId).empty().append(filePath); //playing_song_name ); 
+}
+
+SSMSPlayer.prototype.playSong = function() {
+    $(this.options.playerId).play();
+    //document.getElementById("audio_control").play();
+}
+
+SSMSPlayer.prototype.pauseSong = function() {
+    $(this.options.playerId).pause();
+    // document.getElementById("audio_control").pause();
+}
+
+SSMSPlayer.prototype.reloadSong = function() {
+    $(this.options.playerId).load();
+    //doc
+    ument.getElementById("audio_control").load();
+}
+SSMSPlayer.prototype.playFile = function( play_file ) {
+    var self = this;
+    console.log("Playing file: " + play_file);
+    var req_name = encodeURIComponent(play_file);
+    $(this.options.songSrcId).attr("src", "/file?q=" + req_name); //play_file has a prefixed slash
+    $(this.options.songSrcId).data('songpath', play_file);
+
+    try {
+        self.reloadSong();
+        self.playSong();
+        
+        var splits = play_file.replace("\\", "/").split("/");
+        var name = splits[ splits.length - 1];
+        self.playing_song_name = name;
+        self.playing_song_path = play_file;
+        
+        self.updatePlayer( play_file );
+    } catch ( e ) {
+        console.error(e);
+        alert( e );
+    }
+}
+
+SSMSPlayer.prototype.playFileClick = function(play_file, context) {
+    if( context != '' ) {
+        this.context = context;
+        console.log("Player context: " + context);
+    }
+    this.playFile( play_file )
+}
+
+
+var SSMS = {
+    player: null,
+    playing_song_name: null,
+    playing_song_path: null,
+
+    init: function(){
+        var _player = new SSMSPlayer({
+            songSrcId: '#song_src',
+            playerId: '#audio_control',
+            queryInput: '#query',
+        });
+        SSMS.player = _player;
+    }
+};
+SSMS.init();
+
 var playing_song_name = "";
 var playing_song_path = "";
 var playing_song_dir = "";

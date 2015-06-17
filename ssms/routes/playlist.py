@@ -1,5 +1,9 @@
 from ssms import app
 
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask import redirect
 from flask import Response
 from flask import send_file
 from flask import session
@@ -22,6 +26,15 @@ import urllib2              # for escapeing url encode
 import zipfile              # serve folder for download
 import traceback            # exception on tough stuff
 import sqlite3              # the db
+
+
+from ssms.settings import SECRET_KEY, CONFIG_MAP
+
+from ssms.lib.entities import openDB
+from ssms.lib.entities import getSession
+from ssms.lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
+
+from ssms.lib.log import log
 
 ######################### playlist #############################################
 @app.route("/playlist/new")
@@ -112,11 +125,11 @@ def editPlaylistByID(id, message=None):
         return "Empty"
     playlist_items = g.db.query(PlaylistItem).filter_by(playlist_id=playlist.id)
     return render_template(
-            "playlist_item_list.html",
-            playlist = playlist,
-            playlist_items = playlist_items, 
-            message=message
-        )
+        "playlist_item_list.html",
+        playlist = playlist,
+        playlist_items = playlist_items, 
+        message=message
+    )
 
 # pass playlist ID to load
 @app.route("/playlist/load/<id>")
@@ -124,7 +137,7 @@ def loadPlaylistByID(id, message=None):
     playlist = g.db.query(Bookmark).filter_by(id=id).first() 
     playlist_items = g.db.query(PlaylistItem).filter_by(playlist_id=playlist.id)
     return render_template(
-            playlist = playlist,
-            playlist_items = playlist_items, 
-            message=message
-        )
+        playlist = playlist,
+        playlist_items = playlist_items, 
+        message=message
+    )

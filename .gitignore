@@ -10,3 +10,9 @@
 *.zip
 !test-bunny.ogg
 !test-beep.mp3
+bower_components/
+static/components/
+ssms/static/components/
+library/
+temp/
+logs/

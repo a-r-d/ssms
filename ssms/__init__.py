@@ -30,15 +30,8 @@ import sqlite3              # the db
 
 # internal junk
 from settings import SECRET_KEY, CONFIG_MAP
-from lib.helpers import clean_folder
-from lib.helpers import list_library
-from lib.helpers import log
-from lib.helpers import pathMinusLibrary # try to remove this.
-from lib.helpers import find_rand_file
-from lib.helpers import file_search
-from lib.helpers import file_search_html
-from lib.helpers import clean_folder
 
+from lib.log import log
 from lib.entities import openDB
 from lib.entities import getSession
 from lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
@@ -60,11 +53,20 @@ for d in CONFIG_MAP['INIT_DIRS']:
     if not os.path.exists(d):
         print "Creating location: " + d
         os.makedirs(d)
-        
+
+# sets up the DB on first run.
+def init_db():
+    with app.app_context():
+        db = sqlite3.connect(CONFIG_MAP['DATABASE'])
+        with app.open_resource(CONFIG_MAP['DB_SCHEMA'], mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+
 if not os.path.exists(CONFIG_MAP['DATABASE']):
     print "Creating database at: " + CONFIG_MAP['DATABASE']
     init_db()
-
+else:
+    print "Found DB @:" + CONFIG_MAP['DATABASE']
 
 ##########################################################
 ### Routes & middlware
@@ -73,5 +75,10 @@ import middleware
 import routes.index
 import routes.auth 
 import routes.file
+import routes.bookmark 
+import routes.search
+import routes.playlist 
+import routes.upload 
+
 
 #############################################################

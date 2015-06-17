@@ -1,5 +1,9 @@
 from ssms import app
 
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask import redirect
 from flask import Response
 from flask import send_file
 from flask import session
@@ -24,12 +28,21 @@ import traceback            # exception on tough stuff
 import sqlite3              # the db
 
 
+from ssms.settings import SECRET_KEY, CONFIG_MAP
+from ssms.lib.library_utils import file_search_html
+
+from ssms.lib.entities import openDB
+from ssms.lib.entities import getSession
+from ssms.lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
+
+from ssms.lib.log import log
+
 @app.route('/search/json')
 def search( message=None ):
     try:
         res = []
         if request.method=='GET' and request.args.get("q") != None: 
-            res = file_search_html(LIB_DIR, request.args.get("q"))
+            res = file_search_html(CONFIG_MAP['LIB_DIR'], request.args.get("q"))
         return json.dumps({"files": res})
     except Exception, e:
         traceback.print_exc()
@@ -42,12 +55,12 @@ def searchHTML( message=None ):
     try:
         res = []
         if request.method=='GET' and request.args.get("q") != None: 
-            res = file_search_html(LIB_DIR, urllib2.unquote(request.args.get("q")))
+            res = file_search_html(CONFIG_MAP['LIB_DIR'], urllib2.unquote(request.args.get("q")))
         return render_template(
             'file_table.html', 
             listing=res,
             message=message
-            )
+        )
     except Exception, e:
         traceback.print_exc()
         log("search error: " + str(e) )

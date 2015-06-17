@@ -1,5 +1,9 @@
 from ssms import app
 
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask import redirect
 from flask import Response
 from flask import send_file
 from flask import session
@@ -22,6 +26,21 @@ import urllib2              # for escapeing url encode
 import zipfile              # serve folder for download
 import traceback            # exception on tough stuff
 import sqlite3              # the db
+
+
+from ssms.settings import SECRET_KEY, CONFIG_MAP
+from ssms.lib.library_utils import clean_folder
+from ssms.lib.library_utils import list_library
+from ssms.lib.library_utils import file_search
+from ssms.lib.library_utils import file_search_html
+from ssms.lib.library_utils import clean_folder
+from ssms.lib.library_utils import allowed_file
+
+from ssms.lib.entities import openDB
+from ssms.lib.entities import getSession
+from ssms.lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
+
+from ssms.lib.log import log
 
 
 @app.route("/upload/form")
@@ -55,10 +74,10 @@ def postUploadFile(message=None):
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 print filename
-                upload_to = os.path.normpath( LIB_DIR + "/" + loc)
+                upload_to = os.path.normpath( CONFIG_MAP['LIB_DIR'] + "/" + loc)
                 print "upload to: " + upload_to
                 file.save(os.path.join(upload_to, filename))
-                listing = list_library(LIB_DIR, DB_DIR, loc)
+                listing = list_library(CONFIG_MAP['LIB_DIR'], CONFIG_MAP['DB_DIR'], loc)
                 print listing
                 return json.dumps( { "files":listing } ) #YAY!
             else:
