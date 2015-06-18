@@ -67,14 +67,15 @@ def list_library(lib_dir, db_dir, some_path=None):
 Searches for a file by matching name:
     #mode must be either "full_path" or "name"
 """
-def file_search(LIB_DIR, search_string, mode="full_path"):
+def file_search(dir_to_search, search_string, mode="full_path"):
     matches = []
     # if you pass in a unicode string, os.walk returns unicode results...
-    for root, dirs, files in os.walk(CONFIG_MAP['LIB_DIR']): ## tried LIB_DIR.decode('utf-8') , didnt work on server.
+    for root, dirs, files in os.walk(dir_to_search): ## tried LIB_DIR.decode('utf-8') , didnt work on server.
         for file in files:
             try:
                 if mode == "full_path":
-                    to_search = pathMinusLibrary(CONFIG_MAP['LIB_DIR'], os.path.normpath(os.path.join( root, file )))
+                    #clean path to search:
+                    to_search = pathMinusLibrary(dir_to_search, os.path.normpath(os.path.join( root, file )))
                     if to_search.lower().find( search_string.lower() ) != -1 and test_ext( file ):
                         matches.append( os.path.join( root, file))
                 else:
@@ -87,22 +88,20 @@ def file_search(LIB_DIR, search_string, mode="full_path"):
     matches.sort()
     return matches 
 
-def file_search_html(LIB_DIR, search_string):
-    matches = file_search(LIB_DIR, search_string)
-
+def file_search_html(lib_to_search, search_string):
+    matches = file_search(lib_to_search, search_string)
     file_dict_for_template = []
     for match in matches:
-        file_dict_for_template.append(renderPath(CONFIG_MAP['LIB_DIR'], match ))
-
+        file_dict_for_template.append(renderPath(lib_to_search, match ))
     return file_dict_for_template
     
     
 """
 Walks on the LIB_DIR to get a random file.
 """
-def find_rand_file(LIB_DIR):
+def find_rand_file(dir_to_search):
     the_count = 0
-    for root, dirs, files in os.walk(LIB_DIR):
+    for root, dirs, files in os.walk(dir_to_search):
         for file in files:
             the_count += 1
             
@@ -111,7 +110,7 @@ def find_rand_file(LIB_DIR):
     
     i = 0
     the_file = None
-    for root, dirs, files in os.walk(CONFIG_MAP['LIB_DIR']):
+    for root, dirs, files in os.walk(dir_to_search):
         found = False
         for file in files:
             if i >= the_stopper and os.path.isfile(os.path.join( root, file )) and test_ext(file):

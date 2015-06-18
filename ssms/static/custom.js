@@ -127,9 +127,8 @@ $(document).ready( function(){
 
     $('#query').autocomplete({
       source: function( request, response ) {
-
-        console.log("Performing search:");
         var search_term = $('#query').val();
+        console.log("Performing autocomplete search: ", search_term);
         
         $.ajax({
           url: "/search/json",

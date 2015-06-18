@@ -4,23 +4,37 @@
 </li>
 <li class="divider"></li>
 
-{% for pl in playlists %}
-    <li style="padding-bottom:5px;">
-        <span>
-            &nbsp;
-            <a href="javascript:void(0);" onClick="playPlaylist({{ pl.id }})">
-                {{ pl.name }}
-            </a>
-            &nbsp;
-            <a href="javascript:void(0);" onClick="delPlaylist({{ pl.id }})" class="btn btn-danger" style="float:right;margin:5px;">
-                del
-            </a>
-            &nbsp;
-            <a href="javascript:void(0);" onClick="editPlaylist({{ pl.id }})" class="btn btn-info" style="float:right;margin:5px;">
-                edit
-            </a>
-            &nbsp;
-            <span class="clearfix"></span>
-        </span>
-    </li>
-{% endfor %}
+<li>
+    <table class='table'>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Delete
+            </th>
+            <th>
+                Edit
+            </th>
+        </tr>
+        {% for pl in playlists %}
+            <tr>
+                <td>
+                    <a href="javascript:void(0);" onClick="playPlaylist({{ pl.id }})">
+                        {{ pl.name }}
+                    </a>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" onClick="delPlaylist({{ pl.id }})" class="btn btn-danger" style="float:right;margin:5px;">
+                        del
+                    </a>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" onClick="editPlaylist({{ pl.id }})" class="btn btn-info" style="float:right;margin:5px;">
+                        edit
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</li>
