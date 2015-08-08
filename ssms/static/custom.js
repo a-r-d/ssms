@@ -557,7 +557,7 @@ function delBookmark( id ) {
 }
 
 ///////////////////////////////////////////////////////////////////
-//////////////////       plylist     //////////////////////////////
+//////////////////       playlist     //////////////////////////////
 
 function newPlaylist() {
     var b_name = prompt("New Playlist Name...","");
@@ -666,6 +666,7 @@ function addToPlaylistConfirm() {
         $('#loader_img_picker').show();
     }
 
+    // TODO: fix this to do multiple adds.
     for( var i = 0; i < id_list.length; i++ ) {
         $.ajax({
             url: "/playlist/item/add",
@@ -677,7 +678,7 @@ function addToPlaylistConfirm() {
             dataType:"html"
         }).done( function( res ) {
             if( res != "fail") {
-                console.log( res );
+                console.log('Added to playlist: ', res);
             } else {
                 alert("Failure - check logs.")
             }
@@ -688,6 +689,9 @@ function addToPlaylistConfirm() {
             $('#loader_img_picker').hide();
         });
     }
+
+    // close the modal:
+    $('#playlist_picker_modal').modal('hide');
 }
 
 ////////////////////////////////////////////////////////////////////

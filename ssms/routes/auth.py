@@ -27,15 +27,14 @@ import zipfile              # serve folder for download
 import traceback            # exception on tough stuff
 import sqlite3              # the db
 
-
 from ssms.settings import SECRET_KEY, CONFIG_MAP
-from ssms.lib.helpers import clean_folder
-from ssms.lib.helpers import list_library
-from ssms.lib.helpers import pathMinusLibrary # try to remove this.
-from ssms.lib.helpers import find_rand_file
-from ssms.lib.helpers import file_search
-from ssms.lib.helpers import file_search_html
-from ssms.lib.helpers import clean_folder
+from ssms.lib.library_utils import clean_folder
+from ssms.lib.library_utils import list_library
+from ssms.lib.library_utils import pathMinusLibrary # try to remove this.
+from ssms.lib.library_utils import find_rand_file
+from ssms.lib.library_utils import file_search
+from ssms.lib.library_utils import file_search_html
+from ssms.lib.library_utils import clean_folder
 
 from ssms.lib.entities import openDB
 from ssms.lib.entities import getSession

@@ -27,21 +27,20 @@ import zipfile              # serve folder for download
 import traceback            # exception on tough stuff
 import sqlite3              # the db
 
-
-# internal junk
 from settings import SECRET_KEY, CONFIG_MAP
-from lib.helpers import clean_folder
-from lib.helpers import list_library
-from lib.helpers import log
-from lib.helpers import pathMinusLibrary # try to remove this.
-from lib.helpers import find_rand_file
-from lib.helpers import file_search
-from lib.helpers import file_search_html
-from lib.helpers import clean_folder
+from lib.library_utils import clean_folder
+from lib.library_utils import list_library
+from lib.library_utils import pathMinusLibrary # try to remove this.
+from lib.library_utils import find_rand_file
+from lib.library_utils import file_search
+from lib.library_utils import file_search_html
+from lib.library_utils import clean_folder
 
 from lib.entities import openDB
 from lib.entities import getSession
 from lib.entities import UserPrefs, Playlist, PlaylistItem, Bookmark
+
+from lib.log import log
 
 
 ###########################################################

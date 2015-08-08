@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, String
 
 import sqlite3
 
-from helpers import log
+from log import log
 
 DB_LOC = "../db/main.db" #the default, for testing.
 ENGINE = None

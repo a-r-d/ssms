@@ -1,4 +1,3 @@
-flask>=0.9
+flask>=0.10.1
 tornado>=3.1
-sqlalchemy>=0.8
-pysmbc>=1.0
+sqlalchemy>=1.0.8
