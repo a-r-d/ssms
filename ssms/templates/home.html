@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block body %}
+<style>
+
+    .dir {
+        color: #3D3D3D;
+    }
+    
+    .file {
+        color: #008DC9;
+    }
+
+
+    #audio_control {
+        
+    }
+
+</style>
+<div id="player">
+    <!-- 
+        https://developer.mozilla.org/en-US/docs/DOM/HTMLMediaElement
+
+        Need to add custom controls like:
+
+        http://www.terrillthompson.com/tests/html5-audio.html
+        http://terrillthompson.com/blog/32
+    -->
+    <audio controls id="audio_control" onended="songEnded()">
+        <source id="song_src"  type="audio/mpeg" src="{{ url_for('static', filename='example-sfx/test-beep.mp3') }}">
+        <!-- this is esentially a hack to get firefox to show the media player -->
+        <source id="song_src_fallback"  type="audio/ogg" src="{{ url_for('static', filename='example-sfx/test-bunny.ogg') }}">
+        Your browser does not support the audio element.
+    </audio>
+    <div id="controls">
+
+    </div>
+    <button onClick='prevSong()' class="btn">prev</button>
+    <button onClick='nextSong()' class="btn">next</button>
+    <button onClick='toggleRandom()'  class="btn" id="btn_random_toggle">random</button>
+    <button onClick='downloadNowPlaying()'  class="btn">download playing</button>
+    <br />
+    Playing:
+    <b><span id="nowplaying"></span></b>
+</div>
+<div>
+    <form id="query_form">
+        <div class="input-append">
+          <input class="span2" style="width:250px;" id="query" type="text">
+          <button class="btn" type="button" id="query_submit">Go!</button>
+        </div>
+    </form>
+</div>
+<span id="home_menu">
+    <div class="btn-group">
+        <a class="btn btn-small btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+            Home folder options
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="javascript:void(0);" onClick="uploadToLocation('')">upload to home</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" onClick="makeNewDir('')">new folder</a>
+            </li>
+        </ul>
+    </div>
+</span>
+&nbsp;
+<span id="playlist_menu">
+    <div class="btn-group">
+        <a class="btn btn-small btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+            Playlists
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" id="playlist_area">
+            {% include "playlists_list.html" %}
+        </ul>
+    </div>
+</span>
+&nbsp;
+<span id="bookmark_menu">
+    <div class="btn-group">
+        <a class="btn btn-small btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+            Bookmarks
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" id="bookmark_area">
+            {% include "bookmark_list.html" %}
+        </ul>
+    </div>
+</span>
+<h3>
+    Browse:
+</h3>
+<div id="dir_breadcrumb">
+
+</div>
+<div id='file_browser_table'>
+    
+    {% include "file_table.html" %}
+    
+</div>
+
+<!-- edit a given playlist -->
+<div id="playlist_editor_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Edit this playlist</h3>
+            </div>
+            <div class="modal-body" id="edit_playlist_body"></div>
+            <div class="modal-footer">
+                <button class="btn btn-info" data-dismiss="modal" aria-hidden="true">close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- shows all playlist, manages them -->
+<div id="playlist_picker_modal" style="padding:10px;" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Your Playlists</h3>
+            </div>
+            <div class='modal-body'>
+                <h5>Which playlists did you want to add this song too?</h3>
+                  <div id="target-song" ></div>
+                  <div id="list_playlist_body"></div>
+            <div>
+          
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">cancel</button>
+                <img id="loader_img_picker" class="hide" src='{{ url_for('static', filename='img/ajax-loader.gif') }}' />
+                <button class="btn btn-success" onClick="addToPlaylistConfirm()" >add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

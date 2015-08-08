@@ -1,0 +1,33 @@
+{% if bookmarks == [] %}
+    <h4>&nbsp;No Bookmarks</h4>
+{% else %}
+
+
+    <table class='table'>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Delete
+            </th>
+        </tr>
+
+        {% for bm in bookmarks %}
+            <tr>
+                <td>
+                    <a href="javascript:void(0);" onClick="loadBookmark('{{ bm.path }}')" >
+                        {{ bm.name }}
+                    </a>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" class="btn btn-danger" onClick="delBookmark('{{ bm.id }}')" style="float:right;margin:5px;">
+                        del
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+

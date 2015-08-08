@@ -1,0 +1,16 @@
+{% for pl in playlist_items %}
+    <li style="padding-bottom:5px;">
+        <span>
+            &nbsp;
+            <a href="javascript:void(0);">
+                {{ pl.path }}
+            </a>
+            &nbsp;
+            <a href="javascript:void(0);" onClick="delPlaylistItem({{ pl.id }}, {{ pl.playlist_id }})" class="btn btn-danger" style="float:right;">
+                del
+            </a>
+            &nbsp;
+            <span class="clearfix"></span>
+        </span>
+    </li>
+{% endfor %}
